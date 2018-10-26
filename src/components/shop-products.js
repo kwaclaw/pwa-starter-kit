@@ -19,7 +19,10 @@ import { addToCartIcon } from './my-icons.js';
 // These are the shared styles needed by this element.
 import { ButtonSharedStyles } from './button-shared-styles.js';
 
-class ShopProducts extends LitElement {
+import { observable, observe } from '@nx-js/observer-util';
+import { ModelBoundElement } from './model-bound-element.js';
+
+class ShopProducts extends ModelBoundElement {
   render() {
     return html`
       ${ButtonSharedStyles}
@@ -44,11 +47,26 @@ class ShopProducts extends LitElement {
     `;
   }
 
-  static get properties() { return {
-    products: { type: Object }
-  }}
+  // static get properties() {
+  //   return {
+  //     products: { type: Object }
+  //   }
+  // }
 
-  _addToCart(event) {
+  connectedCallback() {
+    super.connectedCallback();
+    this.products = this._getModel();
+    this._productsObserver = observe(() => {
+      this.update(this.products);
+    });
+  }
+
+  disconnectedCallback() {
+    super.disconnectedCallback();
+    this._productsObserver.unobserve();
+  }
+
+ _addToCart(event) {
     this.dispatchEvent(new CustomEvent("addToCart",
         {bubbles: true, composed: true, detail:{item:event.currentTarget.dataset['index']}}));
   }

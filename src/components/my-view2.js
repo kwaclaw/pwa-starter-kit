@@ -17,13 +17,15 @@ import './counter-element.js';
 // These are the shared styles needed by this element.
 import { SharedStyles } from './shared-styles.js';
 
+import { observable, observe } from '@nx-js/observer-util';
+
 class MyView2 extends PageViewElement {
   render() {
     return html`
       ${SharedStyles}
       <section>
         <h2>State container example: simple counter</h2>
-        <div class="circle">${this._clicks}</div>
+        <div class="circle">${this.counter.value}</div>
         <p>This page contains a reusable <code>&lt;counter-element&gt;</code> which is connected to the
         store. When the element updates its counter, this page updates the values
         in the store, and you can see the total number of clicks reflected in
@@ -32,35 +34,24 @@ class MyView2 extends PageViewElement {
       </section>
       <section>
         <p>
-          <counter-element value="${this._value}" clicks="${this._clicks}"
-              @counter-incremented="${this._increment}"
-              @counter-decremented="${this._decrement}">
+          <counter-element value="${this.counter.value}" clicks="${this.counter.clicks}"
+              @counter-incremented="${() => this.counter.increment()}"
+              @counter-decremented="${() => this.counter.decrement()}">
           </counter-element>
         </p>
       </section>
     `;
   }
 
-  static get properties() { return {
-    // This is the data from the store.
-    _clicks: { type: Number },
-    _value: { type: Number },
-  }}
-
-  constructor() {
-    super();
-    this._clicks = 0;
-    this._value = 0;
+  connectedCallback() {
+    super.connectedCallback();
+    this.counter = this._getModel();
+    this._observer = observe(() => { this.update(this.counter); })
   }
 
-  _increment() {
-    this._clicks++;
-    this._value++;
-  }
-
-  _decrement() {
-    this._clicks++;
-    this._value--;
+  disconnectedCallback()  {
+    super.disconnectedCallback();
+    this._observer.unobserve();
   }
 }
 

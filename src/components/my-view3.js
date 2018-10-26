@@ -20,6 +20,8 @@ import { SharedStyles } from './shared-styles.js';
 import { ButtonSharedStyles } from './button-shared-styles.js';
 import { addToCartIcon } from './my-icons.js';
 
+import { observable, observe } from '@nx-js/observer-util';
+
 class MyView3 extends PageViewElement {
   render() {
     return html`
@@ -52,7 +54,7 @@ class MyView3 extends PageViewElement {
 
       <section>
         <h2>State container example: shopping cart</h2>
-        <div class="cart">${addToCartIcon}<div class="circle small">${this._numItemsInCart(this._cart)}</div></div>
+        <div class="cart">${addToCartIcon}<div class="circle small">${this.model.cart.getCount()}</div></div>
 
         <p>This is a slightly more advanced example, that simulates a
           shopping cart: getting the products, adding/removing items to the
@@ -64,17 +66,17 @@ class MyView3 extends PageViewElement {
       </section>
       <section>
         <h3>Products</h3>
-        <shop-products .products="${this._products}"></shop-products>
+        <shop-products .products="${this.model.products}"></shop-products>
 
         <br>
         <h3>Your Cart</h3>
-        <shop-cart .products="${this._products}" .cart="${this._cart}"></shop-cart>
+        <shop-cart></shop-cart>
 
-        <div>${this._error}</div>
+        <div>${this.model.error}</div>
         <br>
         <p>
-          <button ?hidden="${this._cart.addedIds.length == 0}"
-              @click="${this.checkout}">
+          <button ?hidden="${this.model.cart.items.length == 0}"
+              @click="${() => this.model.checkout()}">
             Checkout
           </button>
         </p>
@@ -82,95 +84,48 @@ class MyView3 extends PageViewElement {
     `;
   }
 
-  static get properties() { return {
-    // This is the data from the store.
-    _cart: { type: Object },
-    _products: { type: Object },
-    _error: { type: String }
-  }}
-
   constructor() {
     super();
-    this._cart = {addedIds: [], quantityById: {}};
-    this._error = '';
-    this._products = this._getAllProducts();
-    this.addEventListener('addToCart', (e) => this._addToCart(e.detail.item));
-    this.addEventListener('removeFromCart', (e) => this._removeFromCart(e.detail.item));
-  }
-
-  checkout() {
-    // Here you could do things like credit card validation, etc.
-    // We're simulating that by flipping a coin :)
-    const flip = Math.floor(Math.random() * 2);
-    if (flip === 0) {
-      this._error = 'Checkout failed. Please try again';
-    } else {
-      this._error = '';
-      this._cart = {addedIds: [], quantityById: {}};
-    }
-  }
-
-  _addToCart(productId) {
-    this._error = '';
-    if (this._products[productId].inventory > 0) {
-      this._products[productId].inventory--;
-
-      if (this._cart.addedIds.indexOf(productId) !== -1) {
-        this._cart.quantityById[productId]++;
-      } else {
-        this._cart.addedIds.push(productId);
-        this._cart.quantityById[productId] = 1;
+    this._getModelHandler = (event) => {
+      switch (event.detail.sender.tagName) {
+        case 'SHOP-CART':
+          event.detail.model = this.model.cart;
+          break;
+        case 'SHOP-PRODUCTS':
+          event.detail.model = this.model.products;
+          break;
+        default:
+          event.detail.model = null;
+          return;
       }
-    }
-
-    // TODO: this should be this.invalidate
-    this._products = JSON.parse(JSON.stringify(this._products));
-    this._cart = JSON.parse(JSON.stringify(this._cart));
+      event.stopPropagation();
+    };
   }
 
-  _removeFromCart(productId) {
-    this._error = '';
-    this._products[productId].inventory++;
-
-    const quantity = this._cart.quantityById[productId];
-    if (quantity === 1) {
-      this._cart.quantityById[productId] = 0;
-      // This removes all items in this array equal to productId.
-      this._cart.addedIds = this._cart.addedIds.filter(e => e !== productId);
-    } else{
-      this._cart.quantityById[productId]--;
-    }
-
-    // TODO: this should be this.invalidate
-    this._products = JSON.parse(JSON.stringify(this._products));
-    this._cart = JSON.parse(JSON.stringify(this._cart));
+  _addToCart(e) {
+    this.model.addToCart(e.detail.item);
   }
 
-  _numItemsInCart(cart) {
-    let num = 0;
-    for (let id of cart.addedIds) {
-      num += cart.quantityById[id];
-    }
-    return num;
+  connectedCallback() {
+    super.connectedCallback();
+    // Set the 'get-model' listener as early as possible, as any async operation
+    // (e.g. async event) may trigger a 'get-model' event from a child component.
+    this.addEventListener('get-model', this._getModelHandler);
+    this.addEventListener('addToCart', this._addToCart);
+    this.model = this._getModel();
+
+    this._productsObserver = observe(() => {
+      const p = this.model.products;
+      this.update(p);
+    });
   }
 
-  _getAllProducts() {
-    // Here you would normally get the data from the server.
-    const PRODUCT_LIST = [
-      {"id": 1, "title": "Cabot Creamery Extra Sharp Cheddar Cheese", "price": 10.99, "inventory": 2},
-      {"id": 2, "title": "Cowgirl Creamery Mt. Tam Cheese", "price": 29.99, "inventory": 10},
-      {"id": 3, "title": "Tillamook Medium Cheddar Cheese", "price": 8.99, "inventory": 5},
-      {"id": 4, "title": "Point Reyes Bay Blue Cheese", "price": 24.99, "inventory": 7},
-      {"id": 5, "title": "Shepherd's Halloumi Cheese", "price": 11.99, "inventory": 3}
-    ];
-
-    // You could reformat the data in the right format as well:
-    const products = PRODUCT_LIST.reduce((obj, product) => {
-      obj[product.id] = product
-      return obj
-    }, {});
-    return products;
-  };
+  disconnectedCallback()  {
+    super.disconnectedCallback();
+    this.removeEventListener('get-model', this._getModelHandler);
+    this.removeEventListener('addToCart', this._addToCart);
+    this._productsObserver.unobserve();
+  }
 }
 
 window.customElements.define('my-view3', MyView3);

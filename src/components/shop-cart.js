@@ -17,15 +17,18 @@ import './shop-item.js';
 // These are the shared styles needed by this element.
 import { ButtonSharedStyles } from './button-shared-styles.js';
 
-class ShopCart extends LitElement {
+import { observable, observe } from '@nx-js/observer-util';
+import { ModelBoundElement } from './model-bound-element.js';
+
+class ShopCart extends ModelBoundElement {
   render() {
     return html`
       ${ButtonSharedStyles}
       <style>
         :host { display: block; }
       </style>
-      <p ?hidden="${this.cart.addedIds.length !== 0}">Please add some products to cart.</p>
-      ${this._displayCart(this.cart).map((item) =>
+      <p ?hidden="${this.model.items.length !== 0}">Please add some products to cart.</p>
+      ${this.model.items.map((item) =>
         html`
           <div>
             <shop-item .name="${item.title}" .amount="${item.amount}" .price="${item.price}"></shop-item>
@@ -38,35 +41,31 @@ class ShopCart extends LitElement {
           </div>
         `
       )}
+      <p ?hidden="${!this.model.items.length}"><b>Total:</b> ${this.model.getTotal()}</p>
     `;
   }
 
   static get properties() { return {
-    cart: { type: Object },
-    products: { type: Object }
+    model: { type: Object },
   }}
 
-  _displayCart(cart) {
-    const items = [];
-    for (let id of cart.addedIds) {
-      const item = this.products[id];
-      items.push({id: item.id, title: item.title, amount: cart.quantityById[id], price: item.price});
-    }
-    return items;
+  connectedCallback() {
+    super.connectedCallback();
+    this.model = this._getModel();
+  
+    this._cartObserver = observe(() => {
+      const i = this.model.items;
+      this.update(i);
+    });
   }
 
-  _calculateTotal(cart) {
-    let total = 0;
-    for (let id of cart.addedIds) {
-      const item = this.products[id];
-      total += item.price * cart.quantityById[id];
-    }
-    return parseFloat(Math.round(total * 100) / 100).toFixed(2);
+  disconnectedCallback()  {
+    super.disconnectedCallback();
+    this._cartObserver.unobserve();
   }
 
   _removeFromCart(event) {
-    this.dispatchEvent(new CustomEvent('removeFromCart',
-        {bubbles: true, composed: true, detail:{item:event.currentTarget.dataset['index']}}));
+    this.model.remove(event.currentTarget.dataset['index']);
   }
 }
 

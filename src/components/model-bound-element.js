@@ -8,17 +8,23 @@ Code distributed by Google as part of the polymer project is also
 subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
 */
 
-import { ModelBoundElement } from './model-bound-element.js';
+import { LitElement } from '@polymer/lit-element';
 
-export class PageViewElement extends ModelBoundElement {
-  // Only render this page if it's actually visible.
-  shouldUpdate() {
-    return this.active;
-  }
-
+export class ModelBoundElement extends LitElement {
   static get properties() {
     return {
-      active: { type: Boolean }
+      model: { type: Object }
     }
+  }
+
+  _getModel(key) {
+    let event = new CustomEvent('get-model', { detail: { sender: this, key }, bubbles: true, cancelable: true, composed: true });
+    this.dispatchEvent(event);
+    return event.detail.model;
+  }
+
+  connectedCallback() {
+    super.connectedCallback();
+    this.model = this._getModel();
   }
 }

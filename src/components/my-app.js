@@ -23,6 +23,9 @@ import '@polymer/app-layout/app-toolbar/app-toolbar.js';
 import { menuIcon } from './my-icons.js';
 import './snack-bar.js';
 
+// This is the view model for this element.
+import { MyAppModel } from '../view_models/myAppModel.js';
+
 class MyApp extends LitElement {
   render() {
     // Anything that's related to rendering should be done in here.
@@ -213,6 +216,7 @@ class MyApp extends LitElement {
   static get properties() {
     return {
       appTitle: { type: String },
+      model: {type: Object },
       _page: { type: String },
       _drawerOpened: { type: Boolean },
       _snackbarOpened: { type: Boolean },
@@ -222,10 +226,38 @@ class MyApp extends LitElement {
 
   constructor() {
     super();
+    this.model = new MyAppModel();
     this._drawerOpened = false;
     // To force all event listeners for gestures to be passive.
     // See https://www.polymer-project.org/3.0/docs/devguide/settings#setting-passive-touch-gestures
     setPassiveTouchGestures(true);
+
+    this._getModelHandler = (event) => {
+      switch (event.detail.sender.tagName) {
+        case 'MY-VIEW2':
+          event.detail.model = this.model.page2;
+          break;
+        case 'MY-VIEW3':
+          event.detail.model = this.model.page3;
+          break;
+        default:
+          event.detail.model = null;
+          return;
+      }
+      event.stopPropagation();
+    };
+  }
+
+  connectedCallback() {
+    super.connectedCallback()
+    // event based dependency injection for child components
+    this.addEventListener('get-model', this._getModelHandler);
+  }
+
+  disconnectedCallback() {
+    super.disconnectedCallback()
+    // event based dependency injection for child components
+    this.removeEventListener('get-model', this._getModelHandler);
   }
 
   firstUpdated() {
