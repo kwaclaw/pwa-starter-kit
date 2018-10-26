@@ -10,7 +10,15 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
 import { LitElement } from '@polymer/lit-element';
 
+// private fields - using the WeakMap() pattern
+const _modelKey = new WeakMap();
+
 export class ModelBoundElement extends LitElement {
+  constructor(modelKey) {
+    super();
+    _modelKey.set(this, modelKey);
+  }
+
   static get properties() {
     return {
       model: { type: Object }
@@ -25,6 +33,6 @@ export class ModelBoundElement extends LitElement {
 
   connectedCallback() {
     super.connectedCallback();
-    this.model = this._getModel();
+    this.model = this._getModel(_modelKey.get(this));
   }
 }

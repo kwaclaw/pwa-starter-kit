@@ -23,10 +23,11 @@ import '@polymer/app-layout/app-toolbar/app-toolbar.js';
 import { menuIcon } from './my-icons.js';
 import './snack-bar.js';
 
+import { ModelBoundElement } from './model-bound-element.js';
 // This is the view model for this element.
 import { MyAppModel } from '../view_models/myAppModel.js';
 
-class MyApp extends LitElement {
+class MyApp extends ModelBoundElement {
   render() {
     // Anything that's related to rendering should be done in here.
     return html`
@@ -226,7 +227,6 @@ class MyApp extends LitElement {
 
   constructor() {
     super();
-    this.model = new MyAppModel();
     this._drawerOpened = false;
     // To force all event listeners for gestures to be passive.
     // See https://www.polymer-project.org/3.0/docs/devguide/settings#setting-passive-touch-gestures

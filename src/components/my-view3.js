@@ -112,7 +112,6 @@ class MyView3 extends PageViewElement {
     // (e.g. async event) may trigger a 'get-model' event from a child component.
     this.addEventListener('get-model', this._getModelHandler);
     this.addEventListener('addToCart', this._addToCart);
-    this.model = this._getModel();
 
     this._productsObserver = observe(() => {
       const p = this.model.products;

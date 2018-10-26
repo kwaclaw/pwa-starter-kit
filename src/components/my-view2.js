@@ -25,7 +25,7 @@ class MyView2 extends PageViewElement {
       ${SharedStyles}
       <section>
         <h2>State container example: simple counter</h2>
-        <div class="circle">${this.counter.value}</div>
+        <div class="circle">${this.model.value}</div>
         <p>This page contains a reusable <code>&lt;counter-element&gt;</code> which is connected to the
         store. When the element updates its counter, this page updates the values
         in the store, and you can see the total number of clicks reflected in
@@ -34,9 +34,9 @@ class MyView2 extends PageViewElement {
       </section>
       <section>
         <p>
-          <counter-element value="${this.counter.value}" clicks="${this.counter.clicks}"
-              @counter-incremented="${() => this.counter.increment()}"
-              @counter-decremented="${() => this.counter.decrement()}">
+          <counter-element value="${this.model.value}" clicks="${this.model.clicks}"
+              @counter-incremented="${() => this.model.increment()}"
+              @counter-decremented="${() => this.model.decrement()}">
           </counter-element>
         </p>
       </section>
@@ -45,8 +45,7 @@ class MyView2 extends PageViewElement {
 
   connectedCallback() {
     super.connectedCallback();
-    this.counter = this._getModel();
-    this._observer = observe(() => { this.update(this.counter); })
+    this._observer = observe(() => { this.update(this.model); })
   }
 
   disconnectedCallback()  {
