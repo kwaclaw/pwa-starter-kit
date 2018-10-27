@@ -29,8 +29,8 @@ class ShopProducts extends ModelBoundElement {
       <style>
         :host { display: block; }
       </style>
-      ${Object.keys(this.products).map((key) => {
-        const item = this.products[key];
+      ${Object.keys(this.model).map((key) => {
+        const item = this.model[key];
         return html`
           <div>
             <shop-item name="${item.title}" amount="${item.inventory}" price="${item.price}"></shop-item>
@@ -47,17 +47,10 @@ class ShopProducts extends ModelBoundElement {
     `;
   }
 
-  // static get properties() {
-  //   return {
-  //     products: { type: Object }
-  //   }
-  // }
-
   connectedCallback() {
     super.connectedCallback();
-    this.products = this._getModel();
     this._productsObserver = observe(() => {
-      this.update(this.products);
+      this.update(this.model);
     });
   }
 

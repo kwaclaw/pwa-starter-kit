@@ -45,14 +45,8 @@ class ShopCart extends ModelBoundElement {
     `;
   }
 
-  static get properties() { return {
-    model: { type: Object },
-  }}
-
   connectedCallback() {
     super.connectedCallback();
-    this.model = this._getModel();
-  
     this._cartObserver = observe(() => {
       const i = this.model.items;
       this.update(i);
