@@ -1,5 +1,5 @@
 
-import { observable, observe } from '@nx-js/observer-util';
+import { observable } from '@nx-js/observer-util';
 import { Page2Model } from './page2Model';
 import { Page3Model } from './page3Model';
 

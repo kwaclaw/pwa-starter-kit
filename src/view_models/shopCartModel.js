@@ -1,10 +1,10 @@
 
-import { observable, observe } from '@nx-js/observer-util';
+import { observable } from '@nx-js/observer-util';
 
 export class ShopCartModel {
     constructor(owner) {
         this._owner = owner;
-        this.items = [];
+        this.items = observable([]);
         return observable(this);
     }
 

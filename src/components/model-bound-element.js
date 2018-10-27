@@ -10,30 +10,14 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
 import { LitElement } from '@polymer/lit-element';
 
-// private fields - using the WeakMap() pattern
-const _modelKey = new WeakMap();
-
 export class ModelBoundElement extends LitElement {
   static get properties() {
     return {
-      model: { type: Object }
-    }
-  }
-
-  // Web-components must not have constructor arguments, so we inject the view model instance
-  // using synchronous event processing with a CustomEvent named 'get-model'.
-  _getModel(key) {
-    let event = new CustomEvent('get-model', { detail: { sender: this, key }, bubbles: true, cancelable: true, composed: true });
-    this.dispatchEvent(event);
-    return event.detail.model;
-  }
-
-  connectedCallback() {
-    super.connectedCallback();
-    const key = this.getAttribute('view-model-key');
-    const model = this._getModel(key || undefined);
-    if (model) {
-      this.model = model;
+      model: {
+        type: Object,
+        attribute: false,
+        reflect: false
+      }
     }
   }
 }

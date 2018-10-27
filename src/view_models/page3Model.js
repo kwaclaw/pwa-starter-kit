@@ -1,5 +1,5 @@
 
-import { observable, observe } from '@nx-js/observer-util';
+import { observable } from '@nx-js/observer-util';
 import { ShopCartModel } from './shopCartModel.js';
 
 function _getAllProducts() {
@@ -22,9 +22,8 @@ function _getAllProducts() {
 
 export class Page3Model {
     constructor() {
-        //super();
         this.cart = new ShopCartModel(this);
-        this.products = _getAllProducts();
+        this.products = observable(_getAllProducts());
         this.error = '';
         return observable(this);
     }

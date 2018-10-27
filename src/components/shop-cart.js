@@ -17,8 +17,13 @@ import './shop-item.js';
 // These are the shared styles needed by this element.
 import { ButtonSharedStyles } from './button-shared-styles.js';
 
-import { observable, observe } from '@nx-js/observer-util';
+import { observe, unobserve } from '@nx-js/observer-util';
 import { ModelBoundElement } from './model-bound-element.js';
+
+// private observer callback
+function cartChanged(instance, cart) {
+  instance.update(cart);
+}
 
 class ShopCart extends ModelBoundElement {
   render() {
@@ -47,15 +52,18 @@ class ShopCart extends ModelBoundElement {
 
   connectedCallback() {
     super.connectedCallback();
-    this._cartObserver = observe(() => {
-      const i = this.model.items;
-      this.update(i);
-    });
+    this._cartObserver = observe(() => cartChanged(this, this.model), { lazy: true });
   }
 
   disconnectedCallback()  {
     super.disconnectedCallback();
-    this._cartObserver.unobserve();
+    unobserve(this._cartObserver);
+  }
+
+  // this starts the observation process, we dont' want to do it on observer
+  // creation because the observed properties might still be undefined at that time.
+  firstUpdated() {
+    this._cartObserver();
   }
 
   _removeFromCart(event) {

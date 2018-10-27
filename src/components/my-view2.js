@@ -17,7 +17,12 @@ import './counter-element.js';
 // These are the shared styles needed by this element.
 import { SharedStyles } from './shared-styles.js';
 
-import { observable, observe } from '@nx-js/observer-util';
+import { observe, unobserve } from '@nx-js/observer-util';
+
+// private observer callback
+function counterChanged(instance, counter) {
+  instance.update(counter);
+}
 
 class MyView2 extends PageViewElement {
   render() {
@@ -45,12 +50,18 @@ class MyView2 extends PageViewElement {
 
   connectedCallback() {
     super.connectedCallback();
-    this._observer = observe(() => { this.update(this.model); })
+    this._observer = observe(() => counterChanged(this, this.model), { lazy: true });
   }
 
   disconnectedCallback()  {
     super.disconnectedCallback();
-    this._observer.unobserve();
+    unobserve(this._observer);
+  }
+
+  // this starts the observation process, we dont' want to do it on observer
+  // creation because the observed properties might still be undefined at that time.
+  firstUpdated() {
+    this._observer();
   }
 }
 

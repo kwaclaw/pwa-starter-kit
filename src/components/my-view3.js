@@ -20,7 +20,12 @@ import { SharedStyles } from './shared-styles.js';
 import { ButtonSharedStyles } from './button-shared-styles.js';
 import { addToCartIcon } from './my-icons.js';
 
-import { observable, observe } from '@nx-js/observer-util';
+import { observe, unobserve } from '@nx-js/observer-util';
+
+// private observer callback
+function cartChanged(instance, cart) {
+  instance.update(cart);
+}
 
 class MyView3 extends PageViewElement {
   render() {
@@ -60,17 +65,17 @@ class MyView3 extends PageViewElement {
           shopping cart: getting the products, adding/removing items to the
           cart, and a checkout action, that can sometimes randomly fail (to
           simulate where you would add failure handling). </p>
-        <p>This view implements a 'get-model' event handler that allows its children,
-          <code>&lt;shop-products&gt;</code> and <code>&lt;shop-cart&gt;</code>, to fetch their
-          view model instances. Communication between the children is managed by the parent. </p>
+        <p>This view sets the view models on its children <code>&lt;shop-products&gt;</code> and
+          <code>&lt;shop-cart&gt;</code> declaratively through 'model' properties.
+          Communication between the children is managed by the parent who listens to their events. </p>
       </section>
       <section>
         <h3>Products</h3>
-        <shop-products .products="${this.model.products}"></shop-products>
+        <shop-products .model=${this.model.products}></shop-products>
 
         <br>
         <h3>Your Cart</h3>
-        <shop-cart></shop-cart>
+        <shop-cart .model=${this.model.cart}></shop-cart>
 
         <div>${this.model.error}</div>
         <br>
@@ -84,46 +89,30 @@ class MyView3 extends PageViewElement {
     `;
   }
 
-  constructor() {
-    super();
-    this._getModelHandler = (event) => {
-      switch (event.detail.sender.tagName) {
-        case 'SHOP-CART':
-          event.detail.model = this.model.cart;
-          break;
-        case 'SHOP-PRODUCTS':
-          event.detail.model = this.model.products;
-          break;
-        default:
-          event.detail.model = null;
-          return;
-      }
-      event.stopPropagation();
-    };
-  }
-
   _addToCart(e) {
     this.model.addToCart(e.detail.item);
   }
 
+  // Setting up observer of view model changes.
+  // NOTE: the observer will not get re-triggered until the observed properties are read!!!
+  //       that is, until the "get" traps of the proxy are used!!!
+  // In our case we LitElement.update(model) to read the relevant view model properties.
   connectedCallback() {
     super.connectedCallback();
-    // Set the 'get-model' listener as early as possible, as any async operation
-    // (e.g. async event) may trigger a 'get-model' event from a child component.
-    this.addEventListener('get-model', this._getModelHandler);
     this.addEventListener('addToCart', this._addToCart);
-
-    this._productsObserver = observe(() => {
-      const p = this.model.products;
-      this.update(p);
-    });
+    this._cartObserver = observe(() => cartChanged(this, this.model), { lazy: true });
   }
 
   disconnectedCallback()  {
     super.disconnectedCallback();
-    this.removeEventListener('get-model', this._getModelHandler);
     this.removeEventListener('addToCart', this._addToCart);
-    this._productsObserver.unobserve();
+    unobserve(this._cartObserver);
+  }
+  
+  // this starts the observation process, we dont' want to do it on observer
+  // creation because the observed properties might still be undefined at that time.
+  firstUpdated() {
+    this._cartObserver();
   }
 }
 
