@@ -60,9 +60,9 @@ class MyView3 extends PageViewElement {
           shopping cart: getting the products, adding/removing items to the
           cart, and a checkout action, that can sometimes randomly fail (to
           simulate where you would add failure handling). </p>
-        <p>This view, passes properties down to its two children, <code>&lt;shop-products&gt;</code> and
-        <code>&lt;shop-cart&gt;</code>, which fire events back up whenever
-        they need to communicate changes.</p>
+        <p>This view implements a 'get-model' event handler that allows its children,
+          <code>&lt;shop-products&gt;</code> and <code>&lt;shop-cart&gt;</code>, to fetch their
+          view model instances. Communication between the children is managed by the parent. </p>
       </section>
       <section>
         <h3>Products</h3>
