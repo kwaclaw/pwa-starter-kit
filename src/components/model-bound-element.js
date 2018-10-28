@@ -16,7 +16,9 @@ export class ModelBoundElement extends LitElement {
       model: {
         type: Object,
         attribute: false,
-        reflect: false
+        reflect: false,
+        // we could force each setting of the model to trigger an update
+        //hasChanged: (newValue, oldValue) => true
       }
     }
   }
