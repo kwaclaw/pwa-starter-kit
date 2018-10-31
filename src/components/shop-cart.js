@@ -9,20 +9,12 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 */
 
 import { html } from '@polymer/lit-element';
-
-// These are the elements needed by this element.
-import { removeFromCartIcon } from './my-icons.js';
-import './shop-item.js';
-
-// These are the shared styles needed by this element.
-import { ButtonSharedStyles } from './button-shared-styles.js';
-
 import { ModelBoundElement } from './model-bound-element.js';
+import './shop-item.js';
 
 class ShopCart extends ModelBoundElement {
   render() {
     return html`
-      ${ButtonSharedStyles}
       <style>
         :host { display: block; }
       </style>
@@ -31,21 +23,11 @@ class ShopCart extends ModelBoundElement {
         html`
           <div>
             <shop-item .model="${item}"></shop-item>
-            <button
-                @click="${this._removeFromCart}"
-                data-index="${item.id}"
-                title="Remove from cart">
-              ${removeFromCartIcon}
-            </button>
           </div>
         `
       )}
       <p ?hidden="${!this.model.items.length}"><b>Total:</b> ${this.model.getTotal()}</p>
     `;
-  }
-
-  _removeFromCart(event) {
-    this.model.remove(event.currentTarget.dataset['index']);
   }
 }
 
