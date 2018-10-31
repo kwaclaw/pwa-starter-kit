@@ -11,15 +11,16 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 import { html } from '@polymer/lit-element';
 import { ModelBoundElement } from './model-bound-element.js'
 
-class ShopItem extends ModelBoundElement {
+class ProductItem extends ModelBoundElement {
   render() {
     return html`
-      ${this.model.name}:
-      <span ?hidden="${this.model.amount === 0}">${this.model.amount} * </span>
+      ${this.model.title}:
+      <span ?hidden="${this.model.inventory === 0}">${this.model.inventory} * </span>
       $${this.model.price}
       </span>
     `;
   }
+
 }
 
-window.customElements.define('shop-item', ShopItem);
+window.customElements.define('product-item', ProductItem);

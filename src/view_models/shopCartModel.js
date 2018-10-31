@@ -26,7 +26,8 @@ export class ShopCartModel {
             if (!product) {
                 return;
             }
-            this.items.push({ id: product.id, title: product.title, price: product.price, amount: 1});
+            const newItem = { id: product.id, name: product.title, price: product.price, amount: 1}
+            this.items.push(observable(newItem));
         }
         this._owner.inventoryRemoved(itemId);
     }

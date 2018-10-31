@@ -22,11 +22,6 @@ import { addToCartIcon } from './my-icons.js';
 
 import { observe, unobserve } from '@nx-js/observer-util';
 
-// private observer callback
-function cartChanged(instance, cart) {
-  instance.update(cart);
-}
-
 class MyView3 extends PageViewElement {
   render() {
     return html`
@@ -100,7 +95,7 @@ class MyView3 extends PageViewElement {
   connectedCallback() {
     super.connectedCallback();
     this.addEventListener('addToCart', this._addToCart);
-    this._cartObserver = observe(() => cartChanged(this, this.model), { lazy: true });
+    this._cartObserver = observe(() => this.update(this.model.cart), { lazy: true });
   }
 
   disconnectedCallback()  {

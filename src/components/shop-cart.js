@@ -8,7 +8,7 @@ Code distributed by Google as part of the polymer project is also
 subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
 */
 
-import { LitElement, html } from '@polymer/lit-element';
+import { html } from '@polymer/lit-element';
 
 // These are the elements needed by this element.
 import { removeFromCartIcon } from './my-icons.js';
@@ -17,13 +17,7 @@ import './shop-item.js';
 // These are the shared styles needed by this element.
 import { ButtonSharedStyles } from './button-shared-styles.js';
 
-import { observe, unobserve } from '@nx-js/observer-util';
 import { ModelBoundElement } from './model-bound-element.js';
-
-// private observer callback
-function cartChanged(instance, cart) {
-  instance.update(cart);
-}
 
 class ShopCart extends ModelBoundElement {
   render() {
@@ -36,7 +30,7 @@ class ShopCart extends ModelBoundElement {
       ${this.model.items.map((item) =>
         html`
           <div>
-            <shop-item .name="${item.title}" .amount="${item.amount}" .price="${item.price}"></shop-item>
+            <shop-item .model="${item}"></shop-item>
             <button
                 @click="${this._removeFromCart}"
                 data-index="${item.id}"
@@ -48,22 +42,6 @@ class ShopCart extends ModelBoundElement {
       )}
       <p ?hidden="${!this.model.items.length}"><b>Total:</b> ${this.model.getTotal()}</p>
     `;
-  }
-
-  connectedCallback() {
-    super.connectedCallback();
-    this._cartObserver = observe(() => cartChanged(this, this.model), { lazy: true });
-  }
-
-  disconnectedCallback()  {
-    super.disconnectedCallback();
-    unobserve(this._cartObserver);
-  }
-
-  // this starts the observation process, we dont' want to do it on observer
-  // creation because the observed properties might still be undefined at that time.
-  firstUpdated() {
-    this._cartObserver();
   }
 
   _removeFromCart(event) {

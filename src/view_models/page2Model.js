@@ -1,5 +1,5 @@
 
-import { observable, observe } from '@nx-js/observer-util';
+import { observable } from '@nx-js/observer-util';
 
 export class Page2Model {
     constructor() {

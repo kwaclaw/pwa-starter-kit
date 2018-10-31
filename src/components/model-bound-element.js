@@ -9,8 +9,25 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 */
 
 import { LitElement } from '@polymer/lit-element';
+import { observe, unobserve } from '@nx-js/observer-util';
 
 export class ModelBoundElement extends LitElement {
+  connectedCallback() {
+    super.connectedCallback();
+    this._observer = observe(() => this.update(this.model), { lazy: true });
+  }
+
+  disconnectedCallback()  {
+    super.disconnectedCallback();
+    unobserve(this._observer);
+  }
+
+  // this starts the observation process, we dont' want to do it on observer
+  // creation because the observed properties might still be undefined at that time.
+  firstUpdated() {
+    this._observer();
+  }
+
   static get properties() {
     return {
       model: {

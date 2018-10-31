@@ -8,10 +8,10 @@ Code distributed by Google as part of the polymer project is also
 subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
 */
 
-import { LitElement, html } from '@polymer/lit-element';
+import { html } from '@polymer/lit-element';
 
 // These are the elements needed by this element.
-import './shop-item.js';
+import './product-item.js';
 
 // These are the elements needed by this element.
 import { addToCartIcon } from './my-icons.js';
@@ -19,13 +19,8 @@ import { addToCartIcon } from './my-icons.js';
 // These are the shared styles needed by this element.
 import { ButtonSharedStyles } from './button-shared-styles.js';
 
-import { observe, unobserve } from '@nx-js/observer-util';
+import { observable } from '@nx-js/observer-util';
 import { ModelBoundElement } from './model-bound-element.js';
-
-// private observer callback
-function productsChanged(instance, products) {
-  instance.update(products);
-}
 
 class ShopProducts extends ModelBoundElement {
   render() {
@@ -35,10 +30,12 @@ class ShopProducts extends ModelBoundElement {
         :host { display: block; }
       </style>
       ${Object.keys(this.model).map((key) => {
-        const item = this.model[key];
+        const product = this.model[key];
+        // need to alias property names
+        const item = observable(product);
         return html`
           <div>
-            <shop-item name="${item.title}" amount="${item.inventory}" price="${item.price}"></shop-item>
+            <product-item .model="${item}"></product-item>
             <button
                 .disabled="${item.inventory === 0}"
                 @click="${this._addToCart}"
@@ -50,22 +47,6 @@ class ShopProducts extends ModelBoundElement {
         `
       })}
     `;
-  }
-
-  connectedCallback() {
-    super.connectedCallback();
-    this._productsObserver = observe(() => productsChanged(this, this.model.products), { lazy: true });
-  }
-
-  disconnectedCallback() {
-    super.disconnectedCallback();
-    unobserve(this._productsObserver);
-  }
-
-  // this starts the observation process, we dont' want to do it on observer
-  // creation because the observed properties might still be undefined at that time.
-  firstUpdated() {
-    this._productsObserver();
   }
 
  _addToCart(event) {
