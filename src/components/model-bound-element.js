@@ -22,7 +22,7 @@ export class ModelBoundElement extends LitElement {
     this._observer = observe(() => this.update(this.model), { lazy: true });
   }
 
-  disconnectedCallback()  {
+  disconnectedCallback() {
     super.disconnectedCallback();
     unobserve(this._observer);
   }
@@ -33,15 +33,13 @@ export class ModelBoundElement extends LitElement {
     this._observer();
   }
 
-  static get properties() {
-    return {
+  static get properties() { return {
       model: {
         type: Object,
         attribute: false,
         reflect: false,
         // we could force each setting of the model to trigger an update
-        //hasChanged: (newValue, oldValue) => true
+        // hasChanged: (newValue, oldValue) => true
       }
-    }
-  }
+  }};
 }

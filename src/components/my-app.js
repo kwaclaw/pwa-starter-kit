@@ -8,7 +8,7 @@ Code distributed by Google as part of the polymer project is also
 subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
 */
 
-import { LitElement, html } from '@polymer/lit-element';
+import { html } from '@polymer/lit-element';
 import { setPassiveTouchGestures } from '@polymer/polymer/lib/utils/settings.js';
 import { installMediaQueryWatcher } from 'pwa-helpers/media-query.js';
 import { installOfflineWatcher } from 'pwa-helpers/network.js';
@@ -24,8 +24,6 @@ import { menuIcon } from './my-icons.js';
 import './snack-bar.js';
 
 import { ModelBoundElement } from './model-bound-element.js';
-// This is the view model for this element.
-import { MyAppModel } from '../view_models/myAppModel.js';
 
 class MyApp extends ModelBoundElement {
   render() {
@@ -214,15 +212,13 @@ class MyApp extends ModelBoundElement {
     `;
   }
 
-  static get properties() {
-    return {
+  static get properties() { return {
       appTitle: { type: String },
       _page: { type: String },
       _drawerOpened: { type: Boolean },
       _snackbarOpened: { type: Boolean },
       _offline: { type: Boolean }
-    }
-  }
+  }};
 
   constructor() {
     super();

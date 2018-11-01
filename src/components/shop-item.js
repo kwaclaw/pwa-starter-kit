@@ -9,7 +9,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 */
 
 import { html } from '@polymer/lit-element';
-import { ModelBoundElement } from './model-bound-element.js'
+import { ModelBoundElement } from './model-bound-element.js';
 
 // These are the elements needed by this element.
 import { removeFromCartIcon } from './my-icons.js';

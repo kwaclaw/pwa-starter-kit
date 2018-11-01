@@ -9,13 +9,12 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 */
 
 import { html } from '@polymer/lit-element';
-import { ModelBoundElement } from './model-bound-element.js'
+import { ModelBoundElement } from './model-bound-element.js';
 
 // These are the elements needed by this element.
 import { addToCartIcon } from './my-icons.js';
 // These are the shared styles needed by this element.
 import { ButtonSharedStyles } from './button-shared-styles.js';
-
 
 class ProductItem extends ModelBoundElement {
   render() {
