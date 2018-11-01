@@ -10,7 +10,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
 import { observable } from '@nx-js/observer-util';
 
-export class Page2Model {
+export default class {
   constructor() {
     this.clicks = 0;
     this.value = 0;

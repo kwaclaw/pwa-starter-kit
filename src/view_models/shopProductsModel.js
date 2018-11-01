@@ -11,7 +11,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
 import { observable } from '@nx-js/observer-util';
 
-export class ShopProductsModel {
+export default class {
     constructor(owner, productMap) {
         this._owner = owner;
         this._moveToCart = (event) => this._owner.addToCart(event.detail.itemId);

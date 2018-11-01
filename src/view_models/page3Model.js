@@ -9,8 +9,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 */
 
 import { observable } from '@nx-js/observer-util';
-import { ShopCartModel } from './shopCartModel.js';
-import { ShopProductsModel } from './shopProductsModel.js';
+import ShopCartModel from './shopCartModel';
+import ShopProductsModel from './shopProductsModel';
 
 function _getAllProducts(owner) {
     // Here you would normally get the data from the server.
@@ -29,7 +29,7 @@ function _getAllProducts(owner) {
     return new ShopProductsModel(owner, productMap);
 }
 
-export class Page3Model {
+export default class {
     constructor() {
         this.cart = new ShopCartModel(this);
         this.products = _getAllProducts(this);

@@ -10,7 +10,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
 import { observable } from '@nx-js/observer-util';
 
-export class ShopCartModel {
+export default class {
   constructor(owner) {
     this._owner = owner;
     this.items = observable([]);
