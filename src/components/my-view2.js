@@ -17,8 +17,6 @@ import './counter-element.js';
 // These are the shared styles needed by this element.
 import { SharedStyles } from './shared-styles.js';
 
-import { observable, observe } from '@nx-js/observer-util';
-
 class MyView2 extends PageViewElement {
   render() {
     return html`
@@ -41,16 +39,6 @@ class MyView2 extends PageViewElement {
         </p>
       </section>
     `;
-  }
-
-  connectedCallback() {
-    super.connectedCallback();
-    this._observer = observe(() => { this.update(this.model); })
-  }
-
-  disconnectedCallback()  {
-    super.disconnectedCallback();
-    this._observer.unobserve();
   }
 }
 

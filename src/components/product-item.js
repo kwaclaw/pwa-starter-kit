@@ -12,23 +12,32 @@ import { html } from '@polymer/lit-element';
 import { ModelBoundElement } from './model-bound-element.js';
 
 // These are the elements needed by this element.
-import { removeFromCartIcon } from './my-icons.js';
+import { addToCartIcon } from './my-icons.js';
 // These are the shared styles needed by this element.
 import { ButtonSharedStyles } from './button-shared-styles.js';
 
-class ShopItem extends ModelBoundElement {
+class ProductItem extends ModelBoundElement {
   render() {
     return html`
       ${ButtonSharedStyles}
-      ${this.model.name}:
-      <span ?hidden="${this.model.amount === 0}">${this.model.amount} * $${this.model.price}</span>
+      ${this.model.title}:
+      <span ?hidden="${this.model.inventory === 0}">${this.model.inventory} * $${this.model.price}</span>
       <button
-          @click="${this.model.remove}"
-          title="Remove from cart">
-        ${removeFromCartIcon}
+          .disabled="${this.model.inventory === 0}"
+          @click="${this._addToCart}"
+          data-index="${this.model.id}"
+          title="${this.model.inventory === 0 ? 'Sold out' : 'Add to cart' }">
+        ${this.model.inventory === 0 ? 'Sold out': addToCartIcon }
       </button>
     `;
   }
+
+  // We could also implement this by modifying the model to have an addToCart method
+  // that would communicate directly with the parent model.
+  _addToCart(event) {
+    this.dispatchEvent(new CustomEvent("addToCart",
+        {bubbles: true, composed: true, detail: {itemId: event.currentTarget.dataset['index'] } }));
+  }
 }
 
-window.customElements.define('shop-item', ShopItem);
+window.customElements.define('product-item', ProductItem);

@@ -8,39 +8,23 @@ Code distributed by Google as part of the polymer project is also
 subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
 */
 
-import { LitElement, html } from '@polymer/lit-element';
-
-// These are the elements needed by this element.
-import './shop-item.js';
-
-// These are the elements needed by this element.
-import { addToCartIcon } from './my-icons.js';
-
-// These are the shared styles needed by this element.
-import { ButtonSharedStyles } from './button-shared-styles.js';
-
-import { observable, observe } from '@nx-js/observer-util';
+import { html } from '@polymer/lit-element';
 import { ModelBoundElement } from './model-bound-element.js';
+
+// These are the elements needed by this element.
+import './product-item.js';
 
 class ShopProducts extends ModelBoundElement {
   render() {
     return html`
-      ${ButtonSharedStyles}
       <style>
         :host { display: block; }
       </style>
-      ${Object.keys(this.model).map((key) => {
-        const item = this.model[key];
+      ${this.model.getKeys().map((key) => {
+        const item = this.model.get(key);
         return html`
           <div>
-            <shop-item name="${item.title}" amount="${item.inventory}" price="${item.price}"></shop-item>
-            <button
-                .disabled="${item.inventory === 0}"
-                @click="${this._addToCart}"
-                data-index="${item.id}"
-                title="${item.inventory === 0 ? 'Sold out' : 'Add to cart' }">
-              ${item.inventory === 0 ? 'Sold out': addToCartIcon }
-            </button>
+            <product-item .model="${item}"></product-item>
           </div>
         `
       })}
@@ -49,19 +33,12 @@ class ShopProducts extends ModelBoundElement {
 
   connectedCallback() {
     super.connectedCallback();
-    this._productsObserver = observe(() => {
-      this.update(this.model);
-    });
+    this.addEventListener('addToCart', this.model._moveToCart);
   }
 
-  disconnectedCallback() {
+  disconnectedCallback()  {
     super.disconnectedCallback();
-    this._productsObserver.unobserve();
-  }
-
- _addToCart(event) {
-    this.dispatchEvent(new CustomEvent("addToCart",
-        {bubbles: true, composed: true, detail:{item:event.currentTarget.dataset['index']}}));
+    this.removeEventListener('addToCart', this.model._moveToCart);
   }
 }
 

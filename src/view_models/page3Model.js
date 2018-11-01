@@ -1,8 +1,18 @@
+/**
+@license
+Copyright (c) 2018 The Polymer Project Authors. All rights reserved.
+This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
+The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
+The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
+Code distributed by Google as part of the polymer project is also
+subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+*/
 
-import { observable, observe } from '@nx-js/observer-util';
-import { ShopCartModel } from './shopCartModel.js';
+import { observable } from '@nx-js/observer-util';
+import ShopCartModel from './shopCartModel';
+import ShopProductsModel from './shopProductsModel';
 
-function _getAllProducts() {
+function _getAllProducts(owner) {
     // Here you would normally get the data from the server.
     const PRODUCT_LIST = [
         { "id": 1, "title": "Cabot Creamery Extra Sharp Cheddar Cheese", "price": 10.99, "inventory": 2 },
@@ -12,19 +22,17 @@ function _getAllProducts() {
         { "id": 5, "title": "Shepherd's Halloumi Cheese", "price": 11.99, "inventory": 3 }
     ];
 
-    // You could reformat the data in the right format as well:
-    const products = PRODUCT_LIST.reduce((obj, product) => {
-        obj[product.id] = product
+    const productMap = PRODUCT_LIST.reduce((obj, product) => {
+        obj[product.id] = product;
         return obj
     }, {});
-    return products;
+    return new ShopProductsModel(owner, productMap);
 }
 
-export class Page3Model {
+export default class {
     constructor() {
-        //super();
         this.cart = new ShopCartModel(this);
-        this.products = _getAllProducts();
+        this.products = _getAllProducts(this);
         this.error = '';
         return observable(this);
     }
@@ -44,17 +52,16 @@ export class Page3Model {
     addToCart(productId) {
         this.error = '';
         this.cart.add(productId);
+        this.products.remove(productId);
+    }
+
+    removeFromCart(productId) {
+        this.error = '';
+        this.cart.remove(productId);
+        this.products.add(productId);
     }
 
     getProduct(productId) {
-        return this.products[productId];
-    }
-
-    inventoryAdded(productId) {
-        this.products[productId].inventory++;
-    }
-
-    inventoryRemoved(productId) {
-        this.products[productId].inventory--;
+        return this.products.get(productId);
     }
 }

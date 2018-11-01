@@ -8,22 +8,13 @@ Code distributed by Google as part of the polymer project is also
 subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
 */
 
-import { LitElement, html } from '@polymer/lit-element';
-
-// These are the elements needed by this element.
-import { removeFromCartIcon } from './my-icons.js';
-import './shop-item.js';
-
-// These are the shared styles needed by this element.
-import { ButtonSharedStyles } from './button-shared-styles.js';
-
-import { observable, observe } from '@nx-js/observer-util';
+import { html } from '@polymer/lit-element';
 import { ModelBoundElement } from './model-bound-element.js';
+import './shop-item.js';
 
 class ShopCart extends ModelBoundElement {
   render() {
     return html`
-      ${ButtonSharedStyles}
       <style>
         :host { display: block; }
       </style>
@@ -31,35 +22,12 @@ class ShopCart extends ModelBoundElement {
       ${this.model.items.map((item) =>
         html`
           <div>
-            <shop-item .name="${item.title}" .amount="${item.amount}" .price="${item.price}"></shop-item>
-            <button
-                @click="${this._removeFromCart}"
-                data-index="${item.id}"
-                title="Remove from cart">
-              ${removeFromCartIcon}
-            </button>
+            <shop-item .model="${item}"></shop-item>
           </div>
         `
       )}
       <p ?hidden="${!this.model.items.length}"><b>Total:</b> ${this.model.getTotal()}</p>
     `;
-  }
-
-  connectedCallback() {
-    super.connectedCallback();
-    this._cartObserver = observe(() => {
-      const i = this.model.items;
-      this.update(i);
-    });
-  }
-
-  disconnectedCallback()  {
-    super.disconnectedCallback();
-    this._cartObserver.unobserve();
-  }
-
-  _removeFromCart(event) {
-    this.model.remove(event.currentTarget.dataset['index']);
   }
 }
 

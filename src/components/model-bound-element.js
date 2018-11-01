@@ -9,31 +9,37 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 */
 
 import { LitElement } from '@polymer/lit-element';
-
-// private fields - using the WeakMap() pattern
-const _modelKey = new WeakMap();
+import { observe, unobserve } from '@nx-js/observer-util';
 
 export class ModelBoundElement extends LitElement {
-  static get properties() {
-    return {
-      model: { type: Object }
-    }
-  }
 
-  // Web-components must not have constructor arguments, so we inject the view model instance
-  // using synchronous event processing with a CustomEvent named 'get-model'.
-  _getModel(key) {
-    let event = new CustomEvent('get-model', { detail: { sender: this, key }, bubbles: true, cancelable: true, composed: true });
-    this.dispatchEvent(event);
-    return event.detail.model;
-  }
-
+  // Setting up observer of view model changes.
+  // NOTE: the observer will not get re-triggered until the observed properties are read!!!
+  //       that is, until the "get" traps of the proxy are used!!!
+  // In our case we use LitElement.update(model) to read the relevant view model properties.
   connectedCallback() {
     super.connectedCallback();
-    const key = this.getAttribute('view-model-key');
-    const model = this._getModel(key || undefined);
-    if (model) {
-      this.model = model;
-    }
+    this._observer = observe(() => this.update(this.model), { lazy: true });
   }
+
+  disconnectedCallback() {
+    super.disconnectedCallback();
+    unobserve(this._observer);
+  }
+
+  // this starts the observation process, we dont' want to do it on observer
+  // creation because the observed properties might still be undefined at that time.
+  firstUpdated() {
+    this._observer();
+  }
+
+  static get properties() { return {
+      model: {
+        type: Object,
+        attribute: false,
+        reflect: false,
+        // we could force each setting of the model to trigger an update
+        // hasChanged: (newValue, oldValue) => true
+      }
+  }};
 }

@@ -8,7 +8,7 @@ Code distributed by Google as part of the polymer project is also
 subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
 */
 
-import { LitElement, html } from '@polymer/lit-element';
+import { html } from '@polymer/lit-element';
 import { setPassiveTouchGestures } from '@polymer/polymer/lib/utils/settings.js';
 import { installMediaQueryWatcher } from 'pwa-helpers/media-query.js';
 import { installOfflineWatcher } from 'pwa-helpers/network.js';
@@ -24,8 +24,6 @@ import { menuIcon } from './my-icons.js';
 import './snack-bar.js';
 
 import { ModelBoundElement } from './model-bound-element.js';
-// This is the view model for this element.
-import { MyAppModel } from '../view_models/myAppModel.js';
 
 class MyApp extends ModelBoundElement {
   render() {
@@ -200,8 +198,8 @@ class MyApp extends ModelBoundElement {
     <!-- Main content -->
     <main role="main" class="main-content">
       <my-view1 class="page" ?active="${this._page === 'view1'}"></my-view1>
-      <my-view2 class="page" ?active="${this._page === 'view2'}"></my-view2>
-      <my-view3 class="page" ?active="${this._page === 'view3'}"></my-view3>
+      <my-view2 class="page" .model=${this.model.page2} ?active="${this._page === 'view2'}"></my-view2>
+      <my-view3 class="page" .model=${this.model.page3} ?active="${this._page === 'view3'}"></my-view3>
       <my-view404 class="page" ?active="${this._page === 'view404'}"></my-view404>
     </main>
 
@@ -214,50 +212,21 @@ class MyApp extends ModelBoundElement {
     `;
   }
 
-  static get properties() {
-    return {
+  static get properties() { return {
       appTitle: { type: String },
-      model: {type: Object },
       _page: { type: String },
       _drawerOpened: { type: Boolean },
       _snackbarOpened: { type: Boolean },
       _offline: { type: Boolean }
-    }
-  }
+  }};
 
   constructor() {
     super();
     this._drawerOpened = false;
+    this.model = window.appModel;
     // To force all event listeners for gestures to be passive.
     // See https://www.polymer-project.org/3.0/docs/devguide/settings#setting-passive-touch-gestures
     setPassiveTouchGestures(true);
-
-    this._getModelHandler = (event) => {
-      switch (event.detail.sender.tagName) {
-        case 'MY-VIEW2':
-          event.detail.model = this.model.page2;
-          break;
-        case 'MY-VIEW3':
-          event.detail.model = this.model.page3;
-          break;
-        default:
-          event.detail.model = null;
-          return;
-      }
-      event.stopPropagation();
-    };
-  }
-
-  connectedCallback() {
-    super.connectedCallback()
-    // event based dependency injection for child components
-    this.addEventListener('get-model', this._getModelHandler);
-  }
-
-  disconnectedCallback() {
-    super.disconnectedCallback()
-    // event based dependency injection for child components
-    this.removeEventListener('get-model', this._getModelHandler);
   }
 
   firstUpdated() {

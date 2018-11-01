@@ -81,21 +81,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     window.process = { env: { NODE_ENV: 'production' } };
   </script>
 
-  <!-- Here, top level view models get instantiated and injected.
-       Let's set this up before a 'get-model' event can happen. -->
   <script type="module">
-    import { MyAppModel } from './src/view_models/myAppModel.js';
-    document._getModelHandler = (event) => {
-      switch (event.detail.sender.tagName) {
-        case 'MY-APP':
-          event.detail.model = new MyAppModel();
-          break;
-        default:
-          event.detail.model = null;
-          return;
-      }
-    };
-    document.addEventListener('get-model', document._getModelHandler);
+    import MyAppModel from './src/view_models/myAppModel';
+    // my-app will access window.appModel as its view model
+    window.appModel = new MyAppModel();
   </script>
 
   <!-- Add any global styles for body, document, etc. -->
@@ -129,6 +118,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
   </noscript>
   <!-- Load webcomponents-loader.js to check and load any polyfills your browser needs -->
   <script src="node_modules/@webcomponents/webcomponentsjs/webcomponents-loader.js"></script>
+
+  <!-- <script type="module">
+    import { MyAppModel } from './src/view_components/myAppModel.js';
+  </script> -->
 
   <!-- Built with love using PWA Starter Kit -->
   <script type="module" src="src/components/my-app.js" crossorigin></script>
