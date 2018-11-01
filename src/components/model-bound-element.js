@@ -12,6 +12,11 @@ import { LitElement } from '@polymer/lit-element';
 import { observe, unobserve } from '@nx-js/observer-util';
 
 export class ModelBoundElement extends LitElement {
+
+  // Setting up observer of view model changes.
+  // NOTE: the observer will not get re-triggered until the observed properties are read!!!
+  //       that is, until the "get" traps of the proxy are used!!!
+  // In our case we use LitElement.update(model) to read the relevant view model properties.
   connectedCallback() {
     super.connectedCallback();
     this._observer = observe(() => this.update(this.model), { lazy: true });

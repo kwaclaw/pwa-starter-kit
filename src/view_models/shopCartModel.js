@@ -31,11 +31,10 @@ export class ShopCartModel {
                 name: product.title,
                 price: product.price,
                 amount: 1,
-                remove: (event) => this.remove(product.id)
+                remove: (event) => this._owner.removeFromCart(product.id)
             };
             this.items.push(observable(newItem));
         }
-        this._owner.inventoryRemoved(itemId);
     }
 
     remove(itemId) {
@@ -46,7 +45,6 @@ export class ShopCartModel {
             if (item.amount <= 0) {
                 this.items.splice(itemIndex, 1);
             }
-            this._owner.inventoryAdded(itemId);
             return true;
         }
         return false;

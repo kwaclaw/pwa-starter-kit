@@ -84,23 +84,13 @@ class MyView3 extends PageViewElement {
     `;
   }
 
-  _addToCart(e) {
-    this.model.addToCart(e.detail.item);
-  }
-
-  // Setting up observer of view model changes.
-  // NOTE: the observer will not get re-triggered until the observed properties are read!!!
-  //       that is, until the "get" traps of the proxy are used!!!
-  // In our case we LitElement.update(model) to read the relevant view model properties.
   connectedCallback() {
     super.connectedCallback();
-    this.addEventListener('addToCart', this._addToCart);
     this._cartObserver = observe(() => this.update(this.model.cart), { lazy: true });
   }
 
   disconnectedCallback()  {
     super.disconnectedCallback();
-    this.removeEventListener('addToCart', this._addToCart);
     unobserve(this._cartObserver);
   }
   

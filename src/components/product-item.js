@@ -24,19 +24,20 @@ class ProductItem extends ModelBoundElement {
       ${this.model.title}:
       <span ?hidden="${this.model.inventory === 0}">${this.model.inventory} * $${this.model.price}</span>
       <button
-        .disabled="${this.model.inventory === 0}"
-        @click="${this._addToCart}"
-        data-index="${this.model.id}"
-        title="${this.model.inventory === 0 ? 'Sold out' : 'Add to cart' }"
-      >
+          .disabled="${this.model.inventory === 0}"
+          @click="${this._addToCart}"
+          data-index="${this.model.id}"
+          title="${this.model.inventory === 0 ? 'Sold out' : 'Add to cart' }">
         ${this.model.inventory === 0 ? 'Sold out': addToCartIcon }
       </button>
     `;
   }
 
+  // We could also implement this by modifying the model to have an addToCart method
+  // that would communicate directly with the parent model.
   _addToCart(event) {
     this.dispatchEvent(new CustomEvent("addToCart",
-        {bubbles: true, composed: true, detail:{item:event.currentTarget.dataset['index']}}));
+        {bubbles: true, composed: true, detail: {itemId: event.currentTarget.dataset['index'] } }));
   }
 }
 

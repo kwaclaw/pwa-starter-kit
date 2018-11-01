@@ -10,7 +10,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
 import { html } from '@polymer/lit-element';
 import { ModelBoundElement } from './model-bound-element.js';
-import { observable } from '@nx-js/observer-util';
 
 // These are the elements needed by this element.
 import './product-item.js';
@@ -21,9 +20,8 @@ class ShopProducts extends ModelBoundElement {
       <style>
         :host { display: block; }
       </style>
-      ${Object.keys(this.model).map((key) => {
-        const product = this.model[key];
-        const item = observable(product);
+      ${this.model.getKeys().map((key) => {
+        const item = this.model.get(key);
         return html`
           <div>
             <product-item .model="${item}"></product-item>
@@ -31,6 +29,16 @@ class ShopProducts extends ModelBoundElement {
         `
       })}
     `;
+  }
+
+  connectedCallback() {
+    super.connectedCallback();
+    this.addEventListener('addToCart', this.model._moveToCart);
+  }
+
+  disconnectedCallback()  {
+    super.disconnectedCallback();
+    this.removeEventListener('addToCart', this.model._moveToCart);
   }
 }
 
