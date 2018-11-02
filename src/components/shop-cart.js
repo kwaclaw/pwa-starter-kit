@@ -9,6 +9,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 */
 
 import { html } from 'lit-html';
+import { repeat } from 'lit-html/directives/repeat';
 import { ModelBoundElement } from './model-bound-element.js';
 import './shop-item.js';
 
@@ -19,10 +20,10 @@ class ShopCart extends ModelBoundElement {
         :host { display: block; }
       </style>
       <p ?hidden="${this.model.items.length !== 0}">Please add some products to cart.</p>
-      ${this.model.items.map((item) =>
+      ${repeat(this.model.items, (item) => item.id, (item) => 
         html`
           <div>
-            <shop-item .model="${item}"></shop-item>
+            <shop-item .model=${item}></shop-item>
           </div>
         `
       )}
