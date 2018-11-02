@@ -8,7 +8,8 @@ Code distributed by Google as part of the polymer project is also
 subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
 */
 
-import { html } from '@polymer/lit-element';
+import { html } from 'lit-html';
+import { observable } from '@nx-js/observer-util';
 import { ModelBoundElement } from './model-bound-element.js';
 
 // These are the elements needed by this element.
@@ -21,7 +22,7 @@ class ShopProducts extends ModelBoundElement {
         :host { display: block; }
       </style>
       ${this.model.getKeys().map((key) => {
-        const item = this.model.get(key);
+        const item = observable(this.model.get(key));
         return html`
           <div>
             <product-item .model="${item}"></product-item>

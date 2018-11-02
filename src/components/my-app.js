@@ -8,7 +8,7 @@ Code distributed by Google as part of the polymer project is also
 subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
 */
 
-import { html } from '@polymer/lit-element';
+import { html } from 'lit-html';
 import { setPassiveTouchGestures } from '@polymer/polymer/lib/utils/settings.js';
 import { installMediaQueryWatcher } from 'pwa-helpers/media-query.js';
 import { installOfflineWatcher } from 'pwa-helpers/network.js';
@@ -179,9 +179,9 @@ class MyApp extends ModelBoundElement {
 
       <!-- This gets hidden on a small screen-->
       <nav class="toolbar-list">
-        <a ?selected="${this._page === 'view1'}" href="/view1">View One</a>
-        <a ?selected="${this._page === 'view2'}" href="/view2">View Two</a>
-        <a ?selected="${this._page === 'view3'}" href="/view3">View Three</a>
+        <a ?selected="${this.model.activePage === 'view1'}" href="/view1">View One</a>
+        <a ?selected="${this.model.activePage === 'view2'}" href="/view2">View Two</a>
+        <a ?selected="${this.model.activePage === 'view3'}" href="/view3">View Three</a>
       </nav>
     </app-header>
 
@@ -189,18 +189,18 @@ class MyApp extends ModelBoundElement {
     <app-drawer .opened="${this._drawerOpened}"
         @opened-changed="${this._drawerOpenedChanged}">
       <nav class="drawer-list">
-        <a ?selected="${this._page === 'view1'}" href="/view1">View One</a>
-        <a ?selected="${this._page === 'view2'}" href="/view2">View Two</a>
-        <a ?selected="${this._page === 'view3'}" href="/view3">View Three</a>
+        <a ?selected="${this.model.activePage === 'view1'}" href="/view1">View One</a>
+        <a ?selected="${this.model.activePage === 'view2'}" href="/view2">View Two</a>
+        <a ?selected="${this.model.activePage === 'view3'}" href="/view3">View Three</a>
       </nav>
     </app-drawer>
 
     <!-- Main content -->
     <main role="main" class="main-content">
-      <my-view1 class="page" ?active="${this._page === 'view1'}"></my-view1>
-      <my-view2 class="page" .model=${this.model.page2} ?active="${this._page === 'view2'}"></my-view2>
-      <my-view3 class="page" .model=${this.model.page3} ?active="${this._page === 'view3'}"></my-view3>
-      <my-view404 class="page" ?active="${this._page === 'view404'}"></my-view404>
+      <my-view1 class="page" ?active="${this.model.activePage === 'view1'}"></my-view1>
+      <my-view2 class="page" .model=${this.model.page2} ?active="${this.model.activePage === 'view2'}"></my-view2>
+      <my-view3 class="page" .model=${this.model.page3} ?active="${this.model.activePage === 'view3'}"></my-view3>
+      <my-view404 class="page" ?active="${this.model.activePage === 'view404'}"></my-view404>
     </main>
 
     <footer>
@@ -212,39 +212,39 @@ class MyApp extends ModelBoundElement {
     `;
   }
 
-  static get properties() { return {
-      appTitle: { type: String },
-      _page: { type: String },
-      _drawerOpened: { type: Boolean },
-      _snackbarOpened: { type: Boolean },
-      _offline: { type: Boolean }
-  }};
-
   constructor() {
     super();
     this._drawerOpened = false;
+    this._snackbarOpened = false;
+    this._offline = false;
     this.model = window.appModel;
     // To force all event listeners for gestures to be passive.
     // See https://www.polymer-project.org/3.0/docs/devguide/settings#setting-passive-touch-gestures
     setPassiveTouchGestures(true);
   }
 
-  firstUpdated() {
+  _updateDrawerState(opened) {
+    if (opened !== this._drawerOpened) {
+      this._drawerOpened = opened;
+    }
+  }
+
+  firstRendered() {
+    super.firstRendered();
+    this.appTitle = this.getAttribute('appTitle');
     installRouter((location) => this._locationChanged(location));
     installOfflineWatcher((offline) => this._offlineChanged(offline));
     installMediaQueryWatcher(`(min-width: 460px)`,
         (matches) => this._layoutChanged(matches));
   }
 
-  updated(changedProps) {
-    if (changedProps.has('_page')) {
-      const pageTitle = this.appTitle + ' - ' + this._page;
-      updateMetadata({
-        title: pageTitle,
-        description: pageTitle
-        // This object also takes an image property, that points to an img src.
-      });
-    }
+  rendered() {
+    const pageTitle = this.appTitle + ' - ' + this.model.activePage;
+    updateMetadata({
+      title: pageTitle,
+      description: pageTitle
+      // This object also takes an image property, that points to an img src.
+    });
   }
 
   _layoutChanged(isWideLayout) {
@@ -277,12 +277,6 @@ class MyApp extends ModelBoundElement {
     this._updateDrawerState(false);
   }
 
-  _updateDrawerState(opened) {
-    if (opened !== this._drawerOpened) {
-      this._drawerOpened = opened;
-    }
-  }
-
   _loadPage(page) {
     switch(page) {
       case 'view1':
@@ -302,7 +296,7 @@ class MyApp extends ModelBoundElement {
         import('../components/my-view404.js');
     }
 
-    this._page = page;
+    this.model.activePage = page;
   }
 
   _menuButtonClicked() {

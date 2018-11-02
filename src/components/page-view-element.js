@@ -11,14 +11,13 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 import { ModelBoundElement } from './model-bound-element.js';
 
 export class PageViewElement extends ModelBoundElement {
-  // Only render this page if it's actually visible.
-  shouldUpdate() {
-    return this.active;
+  constructor() {
+    super();
+    this.active = true;
   }
 
-  static get properties() {
-    return {
-      active: { type: Boolean }
-    }
+  // Only render this page if it's actually visible.
+  shouldRender() {
+    return this.active;
   }
 }

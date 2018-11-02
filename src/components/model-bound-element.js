@@ -8,38 +8,40 @@ Code distributed by Google as part of the polymer project is also
 subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
 */
 
-import { LitElement } from '@polymer/lit-element';
 import { observe, unobserve } from '@nx-js/observer-util';
+import { TemplatedElement } from './templated-element.js';
 
-export class ModelBoundElement extends LitElement {
+const _model = new WeakMap();
+
+export class ModelBoundElement extends TemplatedElement {
+
+  get model() { return _model.get(this); }
+  set model(value) { _model.set(this, value); }
 
   // Setting up observer of view model changes.
   // NOTE: the observer will not get re-triggered until the observed properties are read!!!
   //       that is, until the "get" traps of the proxy are used!!!
-  // In our case we use LitElement.update(model) to read the relevant view model properties.
+  // NOTE: the observer code will need to run synchronously, so that the observer
+  //       can detect which properties were used at the end of the call!
+  // In our case we use this._doRender() instead of this.invalidate() to read the relevant
+  // view model properties syncronously.
   connectedCallback() {
+    //TODO investigate the Queue scheduler for nx-js
+    this._observer = observe(() => {
+      this._doRender();
+    }, { lazy: true, /* debugger: console.log */ });
     super.connectedCallback();
-    this._observer = observe(() => this.update(this.model), { lazy: true });
   }
 
   disconnectedCallback() {
-    super.disconnectedCallback();
     unobserve(this._observer);
   }
 
-  // this starts the observation process, we dont' want to do it on observer
-  // creation because the observed properties might still be undefined at that time.
-  firstUpdated() {
+  firstRendered() { 
+    // this starts the observation process, we dont' want to do it on observer
+    // creation because the observed properties might still be undefined at that time.
     this._observer();
   }
 
-  static get properties() { return {
-      model: {
-        type: Object,
-        attribute: false,
-        reflect: false,
-        // we could force each setting of the model to trigger an update
-        // hasChanged: (newValue, oldValue) => true
-      }
-  }};
+  rendered() { }
 }

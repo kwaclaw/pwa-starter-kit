@@ -8,7 +8,7 @@ Code distributed by Google as part of the polymer project is also
 subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
 */
 
-import { html } from '@polymer/lit-element';
+import { html } from 'lit-html';
 import { PageViewElement } from './page-view-element.js';
 
 // These are the elements needed by this element.
@@ -86,7 +86,7 @@ class MyView3 extends PageViewElement {
 
   connectedCallback() {
     super.connectedCallback();
-    this._cartObserver = observe(() => this.update(this.model.cart), { lazy: true });
+    this._cartObserver = observe(() => this._doRender(), { lazy: true });
   }
 
   disconnectedCallback()  {
@@ -96,7 +96,7 @@ class MyView3 extends PageViewElement {
   
   // this starts the observation process, we dont' want to do it on observer
   // creation because the observed properties might still be undefined at that time.
-  firstUpdated() {
+  firstRendered() {
     this._cartObserver();
   }
 }
