@@ -24,7 +24,7 @@ class ShopProducts extends ModelBoundElement {
         const item = this.model.get(key);
         return html`
           <div>
-            <product-item .model="${item}"></product-item>
+            <product-item .model=${item}></product-item>
           </div>
         `
       })}
@@ -36,7 +36,7 @@ class ShopProducts extends ModelBoundElement {
     this.addEventListener('addToCart', this.model._moveToCart);
   }
 
-  disconnectedCallback()  {
+  disconnectedCallback() {
     super.disconnectedCallback();
     this.removeEventListener('addToCart', this.model._moveToCart);
   }

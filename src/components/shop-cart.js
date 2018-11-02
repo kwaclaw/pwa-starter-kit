@@ -22,7 +22,7 @@ class ShopCart extends ModelBoundElement {
       ${this.model.items.map((item) =>
         html`
           <div>
-            <shop-item .model="${item}"></shop-item>
+            <shop-item .model=${item}></shop-item>
           </div>
         `
       )}

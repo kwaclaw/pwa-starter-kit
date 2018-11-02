@@ -179,9 +179,9 @@ class MyApp extends ModelBoundElement {
 
       <!-- This gets hidden on a small screen-->
       <nav class="toolbar-list">
-        <a ?selected="${this._page === 'view1'}" href="/view1">View One</a>
-        <a ?selected="${this._page === 'view2'}" href="/view2">View Two</a>
-        <a ?selected="${this._page === 'view3'}" href="/view3">View Three</a>
+        <a ?selected="${this.model.activePage === 'view1'}" href="/view1">View One</a>
+        <a ?selected="${this.model.activePage === 'view2'}" href="/view2">View Two</a>
+        <a ?selected="${this.model.activePage === 'view3'}" href="/view3">View Three</a>
       </nav>
     </app-header>
 
@@ -189,18 +189,18 @@ class MyApp extends ModelBoundElement {
     <app-drawer .opened="${this._drawerOpened}"
         @opened-changed="${this._drawerOpenedChanged}">
       <nav class="drawer-list">
-        <a ?selected="${this._page === 'view1'}" href="/view1">View One</a>
-        <a ?selected="${this._page === 'view2'}" href="/view2">View Two</a>
-        <a ?selected="${this._page === 'view3'}" href="/view3">View Three</a>
+        <a ?selected="${this.model.activePage === 'view1'}" href="/view1">View One</a>
+        <a ?selected="${this.model.activePage === 'view2'}" href="/view2">View Two</a>
+        <a ?selected="${this.model.activePage === 'view3'}" href="/view3">View Three</a>
       </nav>
     </app-drawer>
 
     <!-- Main content -->
     <main role="main" class="main-content">
-      <my-view1 class="page" ?active="${this._page === 'view1'}"></my-view1>
-      <my-view2 class="page" .model=${this.model.page2} ?active="${this._page === 'view2'}"></my-view2>
-      <my-view3 class="page" .model=${this.model.page3} ?active="${this._page === 'view3'}"></my-view3>
-      <my-view404 class="page" ?active="${this._page === 'view404'}"></my-view404>
+      <my-view1 class="page" ?active="${this.model.activePage === 'view1'}"></my-view1>
+      <my-view2 class="page" .model=${this.model.page2} ?active="${this.model.activePage === 'view2'}"></my-view2>
+      <my-view3 class="page" .model=${this.model.page3} ?active="${this.model.activePage === 'view3'}"></my-view3>
+      <my-view404 class="page" ?active="${this.model.activePage === 'view404'}"></my-view404>
     </main>
 
     <footer>
@@ -212,13 +212,14 @@ class MyApp extends ModelBoundElement {
     `;
   }
 
-  static get properties() { return {
+  static get properties() {
+    return {
       appTitle: { type: String },
-      _page: { type: String },
       _drawerOpened: { type: Boolean },
       _snackbarOpened: { type: Boolean },
       _offline: { type: Boolean }
-  }};
+    }
+  };
 
   constructor() {
     super();
@@ -230,15 +231,16 @@ class MyApp extends ModelBoundElement {
   }
 
   firstUpdated() {
+    super.firstUpdated();
     installRouter((location) => this._locationChanged(location));
     installOfflineWatcher((offline) => this._offlineChanged(offline));
     installMediaQueryWatcher(`(min-width: 460px)`,
-        (matches) => this._layoutChanged(matches));
+      (matches) => this._layoutChanged(matches));
   }
 
   updated(changedProps) {
-    if (changedProps.has('_page')) {
-      const pageTitle = this.appTitle + ' - ' + this._page;
+    if (changedProps.has('model')) {
+      const pageTitle = this.appTitle + ' - ' + this.model.activePage;
       updateMetadata({
         title: pageTitle,
         description: pageTitle
@@ -284,7 +286,7 @@ class MyApp extends ModelBoundElement {
   }
 
   _loadPage(page) {
-    switch(page) {
+    switch (page) {
       case 'view1':
         import('../components/my-view1.js').then((module) => {
           // Put code in here that you want to run every time when
@@ -302,7 +304,7 @@ class MyApp extends ModelBoundElement {
         import('../components/my-view404.js');
     }
 
-    this._page = page;
+    this.model.activePage = page;
   }
 
   _menuButtonClicked() {

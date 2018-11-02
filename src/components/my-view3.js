@@ -89,7 +89,7 @@ class MyView3 extends PageViewElement {
     this._cartObserver = observe(() => this.update(this.model.cart), { lazy: true });
   }
 
-  disconnectedCallback()  {
+  disconnectedCallback() {
     super.disconnectedCallback();
     unobserve(this._cartObserver);
   }
