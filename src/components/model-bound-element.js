@@ -27,9 +27,16 @@ export class ModelBoundElement extends TemplatedElement {
   // view model properties syncronously.
   connectedCallback() {
     //TODO investigate the Queue scheduler for nx-js
+    // We currently use a scheduler that *IS* the invalidate() function with the observer as argument,
+    // this only works because invalidate() takes an (optional) doRender() equivalent as an argument.
+    // We do this because we want to use invalidate() while at the same time have the observer run synchronously.
     this._observer = observe(() => {
       this._doRender();
-    }, { lazy: true, /* debugger: console.log */ });
+    }, {
+      lazy: true,
+      scheduler: this.invalidate.bind(this),
+      /* debugger: console.log */
+    });
     super.connectedCallback();
   }
 
@@ -38,8 +45,8 @@ export class ModelBoundElement extends TemplatedElement {
   }
 
   firstRendered() { 
-    // this starts the observation process, we dont' want to do it on observer
-    // creation because the observed properties might still be undefined at that time.
+    // this starts the observation process, we dont' want to do it on observer creation
+    // because the observed model/properties might still be undefined at that time.
     this._observer();
   }
 
