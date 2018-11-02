@@ -89,11 +89,11 @@ class MyView3 extends PageViewElement {
     this._cartObserver = observe(() => this._doRender(), { lazy: true });
   }
 
-  disconnectedCallback()  {
+  disconnectedCallback() {
     super.disconnectedCallback();
     unobserve(this._cartObserver);
   }
-  
+
   // this starts the observation process, we dont' want to do it on observer
   // creation because the observed properties might still be undefined at that time.
   firstRendered() {

@@ -232,10 +232,11 @@ class MyApp extends ModelBoundElement {
   firstRendered() {
     super.firstRendered();
     this.appTitle = this.getAttribute('appTitle');
+    
     installRouter((location) => this._locationChanged(location));
     installOfflineWatcher((offline) => this._offlineChanged(offline));
     installMediaQueryWatcher(`(min-width: 460px)`,
-        (matches) => this._layoutChanged(matches));
+      (matches) => this._layoutChanged(matches));
   }
 
   rendered() {
@@ -278,7 +279,7 @@ class MyApp extends ModelBoundElement {
   }
 
   _loadPage(page) {
-    switch(page) {
+    switch (page) {
       case 'view1':
         import('../components/my-view1.js').then((module) => {
           // Put code in here that you want to run every time when

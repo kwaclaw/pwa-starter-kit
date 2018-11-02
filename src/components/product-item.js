@@ -26,8 +26,8 @@ class ProductItem extends ModelBoundElement {
           .disabled="${this.model.inventory === 0}"
           @click="${this._addToCart}"
           data-index="${this.model.id}"
-          title="${this.model.inventory === 0 ? 'Sold out' : 'Add to cart' }">
-        ${this.model.inventory === 0 ? 'Sold out': addToCartIcon }
+          title="${this.model.inventory === 0 ? 'Sold out' : 'Add to cart'}">
+        ${this.model.inventory === 0 ? 'Sold out' : addToCartIcon}
       </button>
     `;
   }
@@ -36,7 +36,7 @@ class ProductItem extends ModelBoundElement {
   // that would communicate directly with the parent model.
   _addToCart(event) {
     this.dispatchEvent(new CustomEvent("addToCart",
-        {bubbles: true, composed: true, detail: {itemId: event.currentTarget.dataset['index'] } }));
+      { bubbles: true, composed: true, detail: { itemId: event.currentTarget.dataset['index'] } }));
   }
 }
 

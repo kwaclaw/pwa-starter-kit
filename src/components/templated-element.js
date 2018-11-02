@@ -20,7 +20,7 @@ export class TemplatedElement extends HTMLElement {
   constructor() {
     super();
     _renderPromise.set(this, microtaskPromise);
-    this.attachShadow({mode: 'open'});
+    this.attachShadow({ mode: 'open' });
   }
 
   render() {
@@ -48,7 +48,7 @@ export class TemplatedElement extends HTMLElement {
         resolver(!this._requestedRender);
       }
     }
-    
+
     return this.renderComplete;
   }
 
@@ -58,7 +58,7 @@ export class TemplatedElement extends HTMLElement {
     if (this.shouldRender()) {
       const templateResult = this.render();
       if (templateResult instanceof TemplateResult) {
-        render(templateResult, this.shadowRoot, {scopeName : this.localName, eventContext : this});
+        render(templateResult, this.shadowRoot, { scopeName: this.localName, eventContext: this });
       }
 
       if (!this._firstRendered) {

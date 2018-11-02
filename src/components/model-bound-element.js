@@ -37,6 +37,8 @@ export class ModelBoundElement extends TemplatedElement {
       scheduler: this.invalidate.bind(this),
       /* debugger: console.log */
     });
+
+    // this._observer = observe(() => this._doRender(), { lazy: true });
     super.connectedCallback();
   }
 
@@ -44,7 +46,7 @@ export class ModelBoundElement extends TemplatedElement {
     unobserve(this._observer);
   }
 
-  firstRendered() { 
+  firstRendered() {
     // this starts the observation process, we dont' want to do it on observer creation
     // because the observed model/properties might still be undefined at that time.
     this._observer();
