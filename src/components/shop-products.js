@@ -22,7 +22,7 @@ class ShopProducts extends ModelBoundElement {
         :host { display: block; }
       </style>
       ${this.model.getKeys().map((key) => {
-        const item = observable(this.model.get(key));
+        const item = this.model.get(key);
         return html`
           <div>
             <product-item .model=${item}></product-item>
