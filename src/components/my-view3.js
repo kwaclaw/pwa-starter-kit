@@ -83,22 +83,6 @@ class MyView3 extends PageViewElement {
       </section>
     `;
   }
-
-  connectedCallback() {
-    super.connectedCallback();
-    this._cartObserver = observe(() => this.update(this.model.cart), { lazy: true });
-  }
-
-  disconnectedCallback() {
-    super.disconnectedCallback();
-    unobserve(this._cartObserver);
-  }
-  
-  // this starts the observation process, we dont' want to do it on observer
-  // creation because the observed properties might still be undefined at that time.
-  firstUpdated() {
-    this._cartObserver();
-  }
 }
 
 window.customElements.define('my-view3', MyView3);
