@@ -1,7 +1,9 @@
 [![Built with pwa–starter–kit](https://img.shields.io/badge/built_with-pwa–starter–kit_-blue.svg)](https://github.com/Polymer/pwa-starter-kit "Built with pwa–starter–kit")
 [![Build status](https://api.travis-ci.org/Polymer/pwa-starter-kit.svg?branch=template-no-redux)](https://travis-ci.org/Polymer/pwa-starter-kit)
 
-# PWA Starter Kit -- `template-no-redux`
+# PWA Starter Kit -- `template-mvvm` and `template-mvvm-lit-plain`
+
+**Note**: This fork adds two extra templates to demonstrate how the MVVM pattern could be implemented with lit-element or plain lit-html. The observable implementation used for view models is [nx-js/observer-util](https://github.com/nx-js/observer-util).
 
 This sample app is a starting point for building PWAs. Out of the box, the template
 gives you the following features:
