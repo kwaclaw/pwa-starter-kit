@@ -21,12 +21,31 @@ import { ButtonSharedStyles } from './button-shared-styles.js';
 // imagine that it could just as well be a third-party element that you
 // got from someone else.
 class CounterElement extends ModelBoundElement {
+  static get properties() {
+    return {
+      /* The total number of clicks you've done. */
+      clicks: { type: Number },
+      /* The current value of the counter. */
+      value: { type: Number }
+    }
+  }
+
+  static get styles() {
+    return [
+      ButtonSharedStyles,
+      css`
+        span {
+          width: 20px;
+          display: inline-block;
+          text-align: center;
+          font-weight: bold;
+        }
+      `
+    ];
+  }
+
   render() {
     return html`
-      ${ButtonSharedStyles}
-      <style>
-        span { width: 20px; display: inline-block; text-align: center; font-weight: bold;}
-      </style>
       <div>
         <p>
           Clicked: <span>${this.model.clicks}</span> times.

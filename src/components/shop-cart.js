@@ -9,16 +9,32 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 */
 
 import { html } from 'lit-html';
+import { css } from 'lit-element';
 import { repeat } from 'lit-html/directives/repeat';
 import { ModelBoundElement } from './model-bound-element.js';
 import './shop-item.js';
 
 class ShopCart extends ModelBoundElement {
+  static get properties() {
+    return {
+      cart: { type: Object },
+      products: { type: Object }
+    };
+  }
+
+  static get styles() {
+    return [
+      ButtonSharedStyles,
+      css`
+        :host {
+          display: block;
+        }
+      `
+    ];
+  }
+
   render() {
     return html`
-      <style>
-        :host { display: block; }
-      </style>
       <p ?hidden="${this.model.items.length !== 0}">Please add some products to cart.</p>
       ${repeat(this.model.items, (item) => item.id, (item) => 
         html`

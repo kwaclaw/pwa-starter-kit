@@ -9,6 +9,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 */
 
 import { html } from 'lit-html';
+import { css } from 'lit-element';
 import { observable } from '@nx-js/observer-util';
 import { ModelBoundElement } from './model-bound-element.js';
 
@@ -16,18 +17,32 @@ import { ModelBoundElement } from './model-bound-element.js';
 import './product-item.js';
 
 class ShopProducts extends ModelBoundElement {
+  static get properties() {
+    return {
+      products: { type: Object }
+    };
+  }
+
+  static get styles() {
+    return [
+      ButtonSharedStyles,
+      css`
+        :host {
+          display: block;
+        }
+      `
+    ];
+  }
+
   render() {
     return html`
-      <style>
-        :host { display: block; }
-      </style>
       ${this.model.getKeys().map((key) => {
         const item = this.model.get(key);
         return html`
           <div>
             <product-item .model=${item}></product-item>
           </div>
-        `
+        `;
       })}
     `;
   }

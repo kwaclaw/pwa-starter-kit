@@ -17,6 +17,7 @@ import { removeFromCartIcon } from './my-icons.js';
 import { ButtonSharedStyles } from './button-shared-styles.js';
 
 class ShopItem extends ModelBoundElement {
+
   render() {
     return html`
       ${ButtonSharedStyles}
