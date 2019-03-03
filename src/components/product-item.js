@@ -1,3 +1,4 @@
+/* eslint-disable no-underscore-dangle */
 /**
 @license
 Copyright (c) 2018 The Polymer Project Authors. All rights reserved.
@@ -9,17 +10,22 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 */
 
 import { html } from 'lit-html';
-import { ModelBoundElement } from './model-bound-element.js';
+import { LitMvvmElement } from '@kdsoft/lit-mvvm';
 
 // These are the elements needed by this element.
-import { addToCartIcon } from './my-icons.js';
-// These are the shared styles needed by this element.
-import { ButtonSharedStyles } from './button-shared-styles.js';
+import { addToCartIcon } from './my-icons';
 
-class ProductItem extends ModelBoundElement {
+import { ButtonSharedStyles } from './button-shared-styles';
+
+class ProductItem extends LitMvvmElement {
+  static get styles() {
+    return [
+      ButtonSharedStyles,
+    ];
+  }
+
   render() {
     return html`
-      ${ButtonSharedStyles}
       ${this.model.title}:
       <span ?hidden="${this.model.inventory === 0}">${this.model.inventory} * $${this.model.price}</span>
       <button
@@ -35,7 +41,7 @@ class ProductItem extends ModelBoundElement {
   // We could also implement this by modifying the model to have an addToCart method
   // that would communicate directly with the parent model.
   _addToCart(event) {
-    this.dispatchEvent(new CustomEvent("addToCart",
+    this.dispatchEvent(new CustomEvent('addToCart',
       { bubbles: true, composed: true, detail: { itemId: event.currentTarget.dataset['index'] } }));
   }
 }

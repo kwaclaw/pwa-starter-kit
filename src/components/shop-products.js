@@ -1,3 +1,4 @@
+/* eslint-disable no-underscore-dangle */
 /**
 @license
 Copyright (c) 2018 The Polymer Project Authors. All rights reserved.
@@ -9,42 +10,32 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 */
 
 import { html } from 'lit-html';
-import { css } from 'lit-element';
-import { observable } from '@nx-js/observer-util';
-import { ModelBoundElement } from './model-bound-element.js';
+import { LitMvvmElement } from '@kdsoft/lit-mvvm';
+import { css } from './css-tag';
 
 // These are the elements needed by this element.
-import './product-item.js';
+import './product-item';
 
-class ShopProducts extends ModelBoundElement {
-  static get properties() {
-    return {
-      products: { type: Object }
-    };
-  }
-
+class ShopProducts extends LitMvvmElement {
   static get styles() {
     return [
-      ButtonSharedStyles,
       css`
         :host {
           display: block;
         }
-      `
+      `,
     ];
   }
 
   render() {
     return html`
-      ${this.model.getKeys().map((key) => {
-        const item = this.model.get(key);
-        return html`
-          <div>
-            <product-item .model=${item}></product-item>
-          </div>
-        `;
-      })}
-    `;
+${this.model.getKeys().map((key) => {
+    const item = this.model.get(key);
+    return html`
+<div>
+  <product-item .model=${item}></product-item>
+</div>`;
+  })}`;
   }
 
   connectedCallback() {

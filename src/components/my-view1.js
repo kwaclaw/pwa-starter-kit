@@ -1,3 +1,4 @@
+/* eslint-disable class-methods-use-this */
 /**
 @license
 Copyright (c) 2018 The Polymer Project Authors. All rights reserved.
@@ -9,15 +10,15 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 */
 
 import { html } from 'lit-html';
-import { PageViewElement } from './page-view-element.js';
+import { PageViewElement } from './page-view-element';
 
 // These are the shared styles needed by this element.
-import { SharedStyles } from './shared-styles.js';
+import { SharedStyles } from './shared-styles';
 
 class MyView1 extends PageViewElement {
   static get styles() {
     return [
-      SharedStyles
+      SharedStyles,
     ];
   }
 

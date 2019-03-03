@@ -15,6 +15,9 @@ import Page3Model from './page3Model';
 class MyAppModel {
   constructor() {
     this.activePage = '';
+    this.drawerOpened = false;
+    this.snackbarOpened = false;
+    this.offline = false;
     this.page2 = new Page2Model();
     this.page3 = new Page3Model();
     return observable(this);

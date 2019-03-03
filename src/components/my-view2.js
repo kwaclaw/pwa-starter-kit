@@ -9,26 +9,18 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 */
 
 import { html } from 'lit-html';
-import { PageViewElement } from './page-view-element.js';
+import { PageViewElement } from './page-view-element';
 
 // These are the elements needed by this element.
-import './counter-element.js';
+import './counter-element';
 
 // These are the shared styles needed by this element.
-import { SharedStyles } from './shared-styles.js';
+import { SharedStyles } from './shared-styles';
 
 class MyView2 extends PageViewElement {
-  static get properties() {
-    return {
-      // This is the data from the store.
-      _clicks: { type: Number },
-      _value: { type: Number }
-    };
-  }
-
   static get styles() {
     return [
-      SharedStyles
+      SharedStyles,
     ];
   }
 

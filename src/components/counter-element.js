@@ -9,27 +9,19 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 */
 
 import { html } from 'lit-html';
-import { ModelBoundElement } from './model-bound-element.js';
+import { LitMvvmElement } from '@kdsoft/lit-mvvm';
+import { css } from './css-tag';
 
 // These are the elements needed by this element.
-import { plusIcon, minusIcon } from './my-icons.js';
+import { plusIcon, minusIcon } from './my-icons';
 
 // These are the shared styles needed by this element.
-import { ButtonSharedStyles } from './button-shared-styles.js';
+import { ButtonSharedStyles } from './button-shared-styles';
 
 // This is a reusable element. It is not connected to the store. You can
 // imagine that it could just as well be a third-party element that you
 // got from someone else.
-class CounterElement extends ModelBoundElement {
-  static get properties() {
-    return {
-      /* The total number of clicks you've done. */
-      clicks: { type: Number },
-      /* The current value of the counter. */
-      value: { type: Number }
-    }
-  }
-
+class CounterElement extends LitMvvmElement {
   static get styles() {
     return [
       ButtonSharedStyles,
@@ -40,7 +32,7 @@ class CounterElement extends ModelBoundElement {
           text-align: center;
           font-weight: bold;
         }
-      `
+      `,
     ];
   }
 

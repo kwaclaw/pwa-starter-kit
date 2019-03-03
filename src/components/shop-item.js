@@ -9,18 +9,22 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 */
 
 import { html } from 'lit-html';
-import { ModelBoundElement } from './model-bound-element.js';
+import { LitMvvmElement } from '@kdsoft/lit-mvvm';
 
 // These are the elements needed by this element.
-import { removeFromCartIcon } from './my-icons.js';
-// These are the shared styles needed by this element.
-import { ButtonSharedStyles } from './button-shared-styles.js';
+import { removeFromCartIcon } from './my-icons';
 
-class ShopItem extends ModelBoundElement {
+import { ButtonSharedStyles } from './button-shared-styles';
+
+class ShopItem extends LitMvvmElement {
+  static get styles() {
+    return [
+      ButtonSharedStyles,
+    ];
+  }
 
   render() {
     return html`
-      ${ButtonSharedStyles}
       ${this.model.name}:
       <span ?hidden="${this.model.amount === 0}">${this.model.amount} * $${this.model.price}</span>
       <button

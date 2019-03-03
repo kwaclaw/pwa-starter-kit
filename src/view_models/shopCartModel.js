@@ -1,3 +1,4 @@
+/* eslint-disable no-underscore-dangle */
 /**
 @license
 Copyright (c) 2018 The Polymer Project Authors. All rights reserved.
@@ -27,9 +28,11 @@ export default class {
   }
 
   add(itemId) {
-    const item = this.items.find(i => i.id == itemId);
+    const item = this.items.find((itm) => {
+      return itm.id == itemId;
+    });
     if (item) {
-      item.amount++;
+      item.amount += 1;
     } else {
       const product = this._owner.getProduct(itemId);
       if (!product) {
@@ -50,7 +53,7 @@ export default class {
     const itemIndex = this.items.findIndex(item => item.id == itemId);
     if (itemIndex >= 0) {
       const item = this.items[itemIndex];
-      item.amount--;
+      item.amount -= 1;
       if (item.amount <= 0) {
         this.items.splice(itemIndex, 1);
       }

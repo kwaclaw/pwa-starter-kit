@@ -9,42 +9,41 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 */
 
 import { html } from 'lit-html';
-import { css } from 'lit-element';
 import { repeat } from 'lit-html/directives/repeat';
-import { ModelBoundElement } from './model-bound-element.js';
-import './shop-item.js';
+import { Queue, priorities } from '@nx-js/queue-util';
+import { LitMvvmElement } from '@kdsoft/lit-mvvm';
+import { css } from './css-tag';
+import './shop-item';
 
-class ShopCart extends ModelBoundElement {
-  static get properties() {
-    return {
-      cart: { type: Object },
-      products: { type: Object }
-    };
-  }
-
+class ShopCart extends LitMvvmElement {
   static get styles() {
     return [
-      ButtonSharedStyles,
       css`
         :host {
           display: block;
         }
-      `
+      `,
     ];
+  }
+
+  constructor() {
+    super();
+    // we do not want to observe intermediate changes to the items array (as triggered by Array.splice),
+    // as this would lead to inconsistent (corrupt) states to be observed. The Queue scheduler fixes that.
+    this.scheduler = new Queue(priorities.LOW);
   }
 
   render() {
     return html`
-      <p ?hidden="${this.model.items.length !== 0}">Please add some products to cart.</p>
-      ${repeat(this.model.items, (item) => item.id, (item) => 
-        html`
-          <div>
-            <shop-item .model=${item}></shop-item>
-          </div>
-        `
-      )}
-      <p ?hidden="${!this.model.items.length}"><b>Total:</b> ${this.model.getTotal()}</p>
-    `;
+<p ?hidden="${this.model.items.length !== 0}">Please add some products to cart.</p>
+${repeat(this.model.items, item => item.id, item => html`
+    <div>
+      <shop-item .model=${item}></shop-item>
+    </div>
+  `)
+}
+<p ?hidden="${!this.model.items.length}"><b>Total:</b> ${this.model.getTotal()}</p>
+`;
   }
 }
 

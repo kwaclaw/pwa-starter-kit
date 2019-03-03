@@ -1,3 +1,4 @@
+/* eslint-disable import/prefer-default-export */
 /**
 @license
 Copyright (c) 2018 The Polymer Project Authors. All rights reserved.
@@ -8,9 +9,9 @@ Code distributed by Google as part of the polymer project is also
 subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
 */
 
-import { ModelBoundElement } from './model-bound-element.js';
+import { LitMvvmElement } from '@kdsoft/lit-mvvm';
 
-export class PageViewElement extends ModelBoundElement {
+export class PageViewElement extends LitMvvmElement {
   constructor() {
     super();
     this.active = true;

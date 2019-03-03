@@ -1,3 +1,4 @@
+/* eslint-disable no-underscore-dangle */
 
 /**
 @license
@@ -14,7 +15,7 @@ import { observable } from '@nx-js/observer-util';
 export default class {
   constructor(owner, productMap) {
     this._owner = owner;
-    this._moveToCart = (event) => this._owner.addToCart(event.detail.itemId);
+    this._moveToCart = event => this._owner.addToCart(event.detail.itemId);
     this._map = productMap;
     return observable(this);
   }
@@ -30,7 +31,7 @@ export default class {
   add(itemId) {
     const item = this._map[itemId];
     if (item) {
-      item.inventory++;
+      item.inventory += 1;
       return true;
     }
     return false;
@@ -39,7 +40,7 @@ export default class {
   remove(itemId) {
     const item = this._map[itemId];
     if (!!item && item.inventory > 0) {
-      item.inventory--;
+      item.inventory -= 1;
       return true;
     }
     return false;

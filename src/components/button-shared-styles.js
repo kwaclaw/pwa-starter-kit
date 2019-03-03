@@ -8,8 +8,9 @@ Code distributed by Google as part of the polymer project is also
 subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
 */
 
-import { css } from 'lit-element';
+import { css } from './css-tag';
 
+// eslint-disable-next-line import/prefer-default-export
 export const ButtonSharedStyles = css`
   button {
     font-size: inherit;

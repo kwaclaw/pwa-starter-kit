@@ -1,3 +1,4 @@
+/* eslint-disable class-methods-use-this */
 /**
 @license
 Copyright (c) 2018 The Polymer Project Authors. All rights reserved.
@@ -8,16 +9,11 @@ Code distributed by Google as part of the polymer project is also
 subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
 */
 
-import { html, css } from 'lit-element';
-import { TemplatedElement } from './templated-element.js';
+import { html } from 'lit-html';
+import { LitBaseElement } from '@kdsoft/lit-mvvm';
+import { css } from './css-tag';
 
-class SnackBar extends TemplatedElement {
-  static get properties() {
-    return {
-      active: { type: Boolean }
-    };
-  }
-
+class SnackBar extends LitBaseElement {
   static get styles() {
     return [
       css`
@@ -50,7 +46,7 @@ class SnackBar extends TemplatedElement {
             margin: auto;
           }
         }
-      `
+      `,
     ];
   }
 

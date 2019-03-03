@@ -18,12 +18,12 @@ export default class {
   }
 
   increment() {
-    this.clicks++;
-    this.value++;
+    this.clicks += 1;
+    this.value += 1;
   }
 
   decrement() {
-    this.clicks++;
-    this.value--;
+    this.clicks += 1;
+    this.value -= 1;
   }
 }

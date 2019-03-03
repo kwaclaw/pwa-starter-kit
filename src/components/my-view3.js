@@ -1,3 +1,4 @@
+/* eslint-disable no-underscore-dangle */
 /**
 @license
 Copyright (c) 2018 The Polymer Project Authors. All rights reserved.
@@ -9,30 +10,21 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 */
 
 import { html } from 'lit-html';
-import { css } from 'lit-element';
-import { PageViewElement } from './page-view-element.js';
+import { css } from './css-tag';
+
+import { PageViewElement } from './page-view-element';
 
 // These are the elements needed by this element.
-import './shop-products.js';
-import './shop-cart.js';
+import './shop-products';
+import './shop-cart';
 
 // These are the shared styles needed by this element.
-import { SharedStyles } from './shared-styles.js';
-import { ButtonSharedStyles } from './button-shared-styles.js';
-import { addToCartIcon } from './my-icons.js';
+import { SharedStyles } from './shared-styles';
+import { ButtonSharedStyles } from './button-shared-styles';
+import { addToCartIcon } from './my-icons';
 
-import { observe, unobserve } from '@nx-js/observer-util';
 
 class MyView3 extends PageViewElement {
-  static get properties() {
-    return {
-      // This is the data from the store.
-      _cart: { type: Object },
-      _quantity: { type: Number },
-      _error: { type: String }
-    };
-  }
-
   static get styles() {
     return [
       SharedStyles,
@@ -64,7 +56,7 @@ class MyView3 extends PageViewElement {
           font-weight: bold;
           line-height: 30px;
         }
-      `
+      `,
     ];
   }
 
@@ -100,22 +92,6 @@ class MyView3 extends PageViewElement {
         </p>
       </section>
     `;
-  }
-
-  connectedCallback() {
-    super.connectedCallback();
-    this._cartObserver = observe(() => this._doRender(), { lazy: true });
-  }
-
-  disconnectedCallback() {
-    super.disconnectedCallback();
-    unobserve(this._cartObserver);
-  }
-
-  // this starts the observation process, we dont' want to do it on observer
-  // creation because the observed properties might still be undefined at that time.
-  firstRendered() {
-    this._cartObserver();
   }
 }
 

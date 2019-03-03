@@ -1,3 +1,4 @@
+/* eslint-disable no-underscore-dangle */
 /**
 @license
 Copyright (c) 2018 The Polymer Project Authors. All rights reserved.
@@ -9,25 +10,24 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 */
 
 import { html } from 'lit-html';
-import { css } from 'lit-element';
-import { setPassiveTouchGestures } from '@polymer/polymer/lib/utils/settings.js';
-import { installMediaQueryWatcher } from 'pwa-helpers/media-query.js';
-import { installOfflineWatcher } from 'pwa-helpers/network.js';
-import { installRouter } from 'pwa-helpers/router.js';
-import { updateMetadata } from 'pwa-helpers/metadata.js';
+import { setPassiveTouchGestures } from '@polymer/polymer/lib/utils/settings';
+import { installMediaQueryWatcher } from 'pwa-helpers/media-query';
+import { installOfflineWatcher } from 'pwa-helpers/network';
+import { installRouter } from 'pwa-helpers/router';
+import { updateMetadata } from 'pwa-helpers/metadata';
+import { LitMvvmElement } from '@kdsoft/lit-mvvm';
+import { css } from './css-tag';
 
 // These are the elements needed by this element.
-import '@polymer/app-layout/app-drawer/app-drawer.js';
-import '@polymer/app-layout/app-header/app-header.js';
-import '@polymer/app-layout/app-scroll-effects/effects/waterfall.js';
-import '@polymer/app-layout/app-toolbar/app-toolbar.js';
-import { menuIcon } from './my-icons.js';
-import './snack-bar.js';
+import '@polymer/app-layout/app-drawer/app-drawer';
+import '@polymer/app-layout/app-header/app-header';
+import '@polymer/app-layout/app-scroll-effects/effects/waterfall';
+import '@polymer/app-layout/app-toolbar/app-toolbar';
+import { menuIcon } from './my-icons';
+import './snack-bar';
 
-import { ModelBoundElement } from './model-bound-element.js';
 
-class MyApp extends ModelBoundElement {
-
+class MyApp extends LitMvvmElement {
   static get styles() {
     return [
       css`
@@ -170,7 +170,7 @@ class MyApp extends ModelBoundElement {
             padding-right: 0px;
           }
         }
-      `
+      `,
     ];
   }
 
@@ -194,7 +194,7 @@ class MyApp extends ModelBoundElement {
 
       <!-- Drawer content -->
       <app-drawer
-          .opened="${this._drawerOpened}"
+          .opened="${this.model.drawerOpened}"
           @opened-changed="${this._drawerOpenedChanged}">
         <nav class="drawer-list">
         <a ?selected="${this.model.activePage === 'view1'}" href="/view1">View One</a>
@@ -215,44 +215,47 @@ class MyApp extends ModelBoundElement {
         <p>Made with &hearts; by the Polymer team.</p>
       </footer>
 
-      <snack-bar ?active="${this._snackbarOpened}">
-        You are now ${this._offline ? 'offline' : 'online'}.
+      <snack-bar ?active="${this.model.snackbarOpened}">
+        You are now ${this.model.offline ? 'offline' : 'online'}.
       </snack-bar>
     `;
   }
 
   constructor() {
     super();
-    this._drawerOpened = false;
-    this._snackbarOpened = false;
-    this._offline = false;
     this.model = window.appModel;
+
     // To force all event listeners for gestures to be passive.
     // See https://www.polymer-project.org/3.0/docs/devguide/settings#setting-passive-touch-gestures
     setPassiveTouchGestures(true);
   }
 
   _updateDrawerState(opened) {
-    if (opened !== this._drawerOpened) {
-      this._drawerOpened = opened;
+    if (opened !== this.model.drawerOpened) {
+      this.model.drawerOpened = opened;
     }
   }
+
+  connectedCallback() {
+    super.connectedCallback();
+    // must install this while observing a model change, as it triggers model changes itself,
+    // which would be ignored during the observe() callback
+    // to trigger them during a page load
+    installRouter(location => this._locationChanged(location));
+ }
 
   firstRendered() {
     super.firstRendered();
     this.appTitle = this.getAttribute('appTitle');
-    
-    installRouter((location) => this._locationChanged(location));
-    installOfflineWatcher((offline) => this._offlineChanged(offline));
-    installMediaQueryWatcher(`(min-width: 460px)`,
-      (matches) => this._layoutChanged(matches));
-  }
+    installOfflineWatcher(offline => this._offlineChanged(offline));
+    installMediaQueryWatcher(`(min-width: 460px)`, matches => this._layoutChanged(matches));
+}
 
   rendered() {
     const pageTitle = this.appTitle + ' - ' + this.model.activePage;
     updateMetadata({
       title: pageTitle,
-      description: pageTitle
+      description: pageTitle,
       // This object also takes an image property, that points to an img src.
     });
   }
@@ -263,8 +266,8 @@ class MyApp extends ModelBoundElement {
   }
 
   _offlineChanged(offline) {
-    const previousOffline = this._offline;
-    this._offline = offline;
+    const previousOffline = this.model.offline;
+    this.model.offline = offline;
 
     // Don't show the snackbar on the first load of the page.
     if (previousOffline === undefined) {
@@ -272,16 +275,15 @@ class MyApp extends ModelBoundElement {
     }
 
     clearTimeout(this.__snackbarTimer);
-    this._snackbarOpened = true;
-    this.__snackbarTimer = setTimeout(() => { this._snackbarOpened = false }, 3000);
+    this.model.snackbarOpened = true;
+    this.__snackbarTimer = setTimeout(() => { this.model.snackbarOpened = false; }, 3000);
   }
 
   _locationChanged(location) {
     const path = window.decodeURIComponent(location.pathname);
     const page = path === '/' ? 'view1' : path.slice(1);
     this._loadPage(page);
-    // Any other info you might want to extract from the path (like page type),
-    // you can do here.
+    // Any other info you might want to extract from the path (like page type), you can do here.
 
     // Close the drawer - in case the *path* change came from a link in the drawer.
     this._updateDrawerState(false);
@@ -290,21 +292,26 @@ class MyApp extends ModelBoundElement {
   _loadPage(page) {
     switch (page) {
       case 'view1':
-        import('../components/my-view1.js').then((module) => {
+        import('./my-view1.js').then((module) => {
           // Put code in here that you want to run every time when
           // navigating to view1 after my-view1.js is loaded.
         });
         break;
       case 'view2':
-        import('../components/my-view2.js');
+        import('./my-view2.js');
         break;
       case 'view3':
-        import('../components/my-view3.js');
+        import('./my-view3.js');
         break;
       default:
         page = 'view404';
-        import('../components/my-view404.js');
+        import('./my-view404.js');
     }
+
+    // we need to queue this change, because on a browser page load, locationChanged()
+    // will be called while in the middle of an observe() callback, therefore not
+    // triggering another observe() callback, and (this) main page would not re-render.
+    // window.setTimeout(() => { this.model.activePage = page; }, 0);
 
     this.model.activePage = page;
   }
