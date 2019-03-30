@@ -242,14 +242,14 @@ class MyApp extends LitMvvmElement {
     // which would be ignored during the observe() callback
     // to trigger them during a page load
     installRouter(location => this._locationChanged(location));
- }
+  }
 
   firstRendered() {
     super.firstRendered();
     this.appTitle = this.getAttribute('appTitle');
     installOfflineWatcher(offline => this._offlineChanged(offline));
     installMediaQueryWatcher(`(min-width: 460px)`, matches => this._layoutChanged(matches));
-}
+  }
 
   rendered() {
     const pageTitle = this.appTitle + ' - ' + this.model.activePage;

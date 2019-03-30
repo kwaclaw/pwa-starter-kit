@@ -19,18 +19,18 @@
     "test:regenerate_screenshots": "mocha test/integration/screenshots-baseline/regenerate.js --timeout=15000"
   },
   "dependencies": {
-    "@kdsoft/lit-mvvm": "^0.9.3",
+    "@kdsoft/lit-mvvm": "^0.9.5",
     "@nx-js/observer-util": "^4.2.2",
     "@nx-js/queue-util": "^1.1.1",
     "@polymer/app-layout": "^3.0.2",
-    "@polymer/polymer": "^3.1.0",
+    "@polymer/polymer": "^3.2.0",
     "@webcomponents/webcomponentsjs": "^2.2.7",
     "lit-html": "^1.0.0",
     "pwa-helpers": "^0.9.1"
   },
   "devDependencies": {
     "@polymer/test-fixture": "^4.0.2",
-    "axe-core": "^3.0.0",
+    "axe-core": "^3.2.2",
     "chai": "^4.2.0",
     "del": "^3.0.0",
     "gulp": "^4.0.0",
@@ -41,7 +41,7 @@
     "polymer-cli": "^1.9.7",
     "polyserve": "^0.27.15",
     "prpl-server": "^1.4.0",
-    "puppeteer": "^1.12.2",
+    "puppeteer": "^1.14.0",
     "wct-mocha": "^1.0.0"
   }
 }
